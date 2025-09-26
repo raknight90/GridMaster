@@ -7,6 +7,7 @@ import { ImageUpload } from "./ImageUpload";
 import { GridControls } from "./GridControls";
 import { GridCanvas } from "./GridCanvas";
 import { GridExporter } from "./GridExporter";
+import GridMasterIcon from "/gridmaster-icon.png"; // Import the icon
 
 export const GridMasterApp = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -54,7 +55,10 @@ export const GridMasterApp = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
       <Card className="w-full max-w-6xl bg-card text-card-foreground shadow-lg">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center">GridMaster</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center flex items-center justify-center">
+            <img src={GridMasterIcon} alt="GridMaster Icon" className="h-8 w-auto mr-2" />
+            GridMaster
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-1/3 space-y-6">
