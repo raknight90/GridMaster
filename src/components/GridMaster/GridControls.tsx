@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button"; // Import Button component
+import { Button } from "@/components/ui/button";
 
 interface GridControlsProps {
   rows: number;
@@ -25,7 +25,8 @@ interface GridControlsProps {
   setShowDiagonalLines: (show: boolean) => void;
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
-  onReset: () => void; // New prop for reset function
+  onReset: () => void;
+  onExport: () => void; // New prop for export function
 }
 
 export const GridControls = ({
@@ -45,7 +46,8 @@ export const GridControls = ({
   setShowDiagonalLines,
   zoomLevel,
   setZoomLevel,
-  onReset, // Destructure onReset
+  onReset,
+  onExport, // Destructure onExport
 }: GridControlsProps) => {
   return (
     <Card className="bg-card text-card-foreground">
@@ -133,6 +135,9 @@ export const GridControls = ({
         </div>
         <Button onClick={onReset} className="w-full mt-4">
           Reset Settings
+        </Button>
+        <Button onClick={onExport} className="w-full mt-2" disabled={!imageSrc}>
+          Export Image
         </Button>
       </CardContent>
     </Card>

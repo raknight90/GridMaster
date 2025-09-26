@@ -6,6 +6,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { ImageUpload } from "./ImageUpload";
 import { GridControls } from "./GridControls";
 import { GridCanvas } from "./GridCanvas";
+import { GridExporter } from "./GridExporter"; // Import GridExporter
 
 export const GridMasterApp = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -17,7 +18,8 @@ export const GridMasterApp = () => {
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
   const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
-  const [zoomLevel, setZoomLevel] = useState(100); // New state for zoom level (100% by default)
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [triggerExport, setTriggerExport] = useState(false); // New state for triggering export
 
   const resetGridSettings = useCallback(() => {
     setRows(10);
@@ -30,6 +32,16 @@ export const GridMasterApp = () => {
     setGridPosition({ x: 0, y: 0 });
     setZoomLevel(100);
   }, []);
+
+  const handleExport = () => {
+    if (imageSrc) {
+      setTriggerExport(true);
+    }
+  };
+
+  const handleExportComplete = () => {
+    setTriggerExport(false);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -57,7 +69,9 @@ export const GridMasterApp = () => {
               setShowDiagonalLines={setShowDiagonalLines}
               zoomLevel={zoomLevel}
               setZoomLevel={setZoomLevel}
-              onReset={resetGridSettings} // Pass the reset function
+              onReset={resetGridSettings}
+              onExport={handleExport} // Pass the export handler
+              imageSrc={imageSrc} // Pass imageSrc to disable export button if no image
             />
           </div>
           <div className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted">
@@ -82,6 +96,21 @@ export const GridMasterApp = () => {
         </CardContent>
       </Card>
       <MadeWithDyad />
+      {/* GridExporter component, hidden from view */}
+      <GridExporter
+        imageSrc={imageSrc}
+        rows={rows}
+        cols={cols}
+        lineThickness={lineThickness}
+        lineColor={lineColor}
+        showRowNumbers={showRowNumbers}
+        showColNumbers={showColNumbers}
+        showDiagonalLines={showDiagonalLines}
+        gridPosition={gridPosition}
+        zoomLevel={zoomLevel}
+        triggerExport={triggerExport}
+        onExportComplete={handleExportComplete}
+      />
     </div>
   );
 };
