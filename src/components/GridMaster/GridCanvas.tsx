@@ -65,7 +65,7 @@ export const GridCanvas = ({
     if (!isDragging) return;
     setGridPosition({
       x: e.clientX - dragStartOffset.x,
-      y: e.clientY - gridStartOffset.y,
+      y: e.clientY - dragStartOffset.y, // Corrected from gridStartOffset.y
     });
   };
 
