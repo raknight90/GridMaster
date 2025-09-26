@@ -42,7 +42,7 @@ export const GridMasterApp = () => {
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions); // Changed to 'resize' for consistency
+    return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
   // Effect to load image and set original dimensions
@@ -191,7 +191,7 @@ export const GridMasterApp = () => {
                 showDiagonalLines={showDiagonalLines}
                 diagonalLineOpacity={diagonalLineOpacity}
                 imageOffset={imageOffset}
-                setImageOffset={setImageOffset} {/* Pass setImageOffset */}
+                setImageOffset={setImageOffset}
                 zoomLevel={zoomLevel}
                 showImage={showImage}
               />
