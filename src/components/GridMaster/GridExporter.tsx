@@ -8,6 +8,7 @@ interface GridExporterProps {
   cols: number;
   lineThickness: number;
   lineColor: string;
+  lineOpacity: number; // New prop for line opacity
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
@@ -23,6 +24,7 @@ export const GridExporter = ({
   cols,
   lineThickness,
   lineColor,
+  lineOpacity, // Destructure lineOpacity
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
@@ -57,8 +59,10 @@ export const GridExporter = ({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw the image
-      // Adjust image drawing based on gridPosition to ensure it's relative to the canvas origin
       ctx.drawImage(img, gridPosition.x, gridPosition.y, scaledImageWidth, scaledImageHeight);
+
+      // Apply line opacity
+      ctx.globalAlpha = lineOpacity / 100;
 
       // Draw grid lines
       ctx.strokeStyle = lineColor;
@@ -90,7 +94,7 @@ export const GridExporter = ({
         ctx.save();
         ctx.strokeStyle = lineColor;
         ctx.lineWidth = lineThickness;
-        ctx.globalAlpha = 0.5; // Match opacity from GridCanvas
+        ctx.globalAlpha = (lineOpacity / 100) * 0.5; // Apply opacity and match GridCanvas's 0.5 multiplier
 
         for (let rIdx = 0; rIdx < rows; rIdx++) {
           for (let cIdx = 0; cIdx < cols; cIdx++) {
@@ -117,6 +121,7 @@ export const GridExporter = ({
       ctx.font = "14px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
+      ctx.globalAlpha = lineOpacity / 100; // Apply opacity to text
 
       // Row Numbers
       if (showRowNumbers) {
@@ -126,13 +131,16 @@ export const GridExporter = ({
         }
       }
 
-      // Column Numbers
+      // Column Numbers (now letters)
       if (showColNumbers) {
         for (let i = 0; i < cols; i++) {
           const x = gridPosition.x + (i + 0.5) * cellWidth;
-          ctx.fillText((i + 1).toString(), x, gridPosition.y - 20); // Offset to the top
+          ctx.fillText(String.fromCharCode(65 + i), x, gridPosition.y - 20); // Offset to the top, use letters
         }
       }
+
+      // Reset globalAlpha for the rest of the canvas operations if any
+      ctx.globalAlpha = 1;
 
       // Trigger download
       const dataURL = canvas.toDataURL("image/png");
@@ -152,6 +160,7 @@ export const GridExporter = ({
     cols,
     lineThickness,
     lineColor,
+    lineOpacity, // Add lineOpacity to dependencies
     showRowNumbers,
     showColNumbers,
     showDiagonalLines,

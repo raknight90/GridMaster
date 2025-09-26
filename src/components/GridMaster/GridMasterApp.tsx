@@ -6,7 +6,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { ImageUpload } from "./ImageUpload";
 import { GridControls } from "./GridControls";
 import { GridCanvas } from "./GridCanvas";
-import { GridExporter } from "./GridExporter"; // Import GridExporter
+import { GridExporter } from "./GridExporter";
 
 export const GridMasterApp = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -14,25 +14,27 @@ export const GridMasterApp = () => {
   const [cols, setCols] = useState(10);
   const [lineThickness, setLineThickness] = useState(2);
   const [lineColor, setLineColor] = useState("#ffffff"); // Default white for dark theme
+  const [lineOpacity, setLineOpacity] = useState(100); // New state for line opacity (0-100)
   const [showRowNumbers, setShowRowNumbers] = useState(false);
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
   const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
   const [zoomLevel, setZoomLevel] = useState(100);
   const [triggerExport, setTriggerExport] = useState(false);
-  const [showImage, setShowImage] = useState(true); // New state for image visibility
+  const [showImage, setShowImage] = useState(true);
 
   const resetGridSettings = useCallback(() => {
     setRows(10);
     setCols(10);
     setLineThickness(2);
     setLineColor("#ffffff");
+    setLineOpacity(100); // Reset line opacity
     setShowRowNumbers(false);
     setShowColNumbers(false);
     setShowDiagonalLines(false);
     setGridPosition({ x: 0, y: 0 });
     setZoomLevel(100);
-    setShowImage(true); // Reset showImage to true
+    setShowImage(true);
   }, []);
 
   const handleExport = () => {
@@ -63,6 +65,8 @@ export const GridMasterApp = () => {
               setLineThickness={setLineThickness}
               lineColor={lineColor}
               setLineColor={setLineColor}
+              lineOpacity={lineOpacity} // Pass lineOpacity
+              setLineOpacity={setLineOpacity} // Pass setLineOpacity
               showRowNumbers={showRowNumbers}
               setShowRowNumbers={setShowRowNumbers}
               showColNumbers={showColNumbers}
@@ -74,8 +78,8 @@ export const GridMasterApp = () => {
               onReset={resetGridSettings}
               onExport={handleExport}
               imageSrc={imageSrc}
-              showImage={showImage} // Pass showImage
-              setShowImage={setShowImage} // Pass setShowImage
+              showImage={showImage}
+              setShowImage={setShowImage}
             />
           </div>
           <div className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted">
@@ -86,13 +90,14 @@ export const GridMasterApp = () => {
                 cols={cols}
                 lineThickness={lineThickness}
                 lineColor={lineColor}
+                lineOpacity={lineOpacity} // Pass lineOpacity
                 showRowNumbers={showRowNumbers}
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
                 gridPosition={gridPosition}
                 setGridPosition={setGridPosition}
                 zoomLevel={zoomLevel}
-                showImage={showImage} // Pass showImage
+                showImage={showImage}
               />
             ) : (
               <p className="text-muted-foreground">Upload an image to get started!</p>
@@ -107,6 +112,7 @@ export const GridMasterApp = () => {
         cols={cols}
         lineThickness={lineThickness}
         lineColor={lineColor}
+        lineOpacity={lineOpacity} // Pass lineOpacity
         showRowNumbers={showRowNumbers}
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}

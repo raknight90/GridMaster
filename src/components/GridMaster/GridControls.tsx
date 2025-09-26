@@ -17,6 +17,8 @@ interface GridControlsProps {
   setLineThickness: (thickness: number) => void;
   lineColor: string;
   setLineColor: (color: string) => void;
+  lineOpacity: number; // New prop for line opacity
+  setLineOpacity: (opacity: number) => void; // New prop for setting line opacity
   showRowNumbers: boolean;
   setShowRowNumbers: (show: boolean) => void;
   showColNumbers: boolean;
@@ -27,9 +29,9 @@ interface GridControlsProps {
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
   onExport: () => void;
-  imageSrc: string | null; // Added to disable export button if no image
-  showImage: boolean; // New prop for image visibility
-  setShowImage: (show: boolean) => void; // New prop for setting image visibility
+  imageSrc: string | null;
+  showImage: boolean;
+  setShowImage: (show: boolean) => void;
 }
 
 export const GridControls = ({
@@ -41,6 +43,8 @@ export const GridControls = ({
   setLineThickness,
   lineColor,
   setLineColor,
+  lineOpacity, // Destructure lineOpacity
+  setLineOpacity, // Destructure setLineOpacity
   showRowNumbers,
   setShowRowNumbers,
   showColNumbers,
@@ -52,8 +56,8 @@ export const GridControls = ({
   onReset,
   onExport,
   imageSrc,
-  showImage, // Destructure showImage
-  setShowImage, // Destructure setShowImage
+  showImage,
+  setShowImage,
 }: GridControlsProps) => {
   return (
     <Card className="bg-card text-card-foreground">
@@ -105,6 +109,17 @@ export const GridControls = ({
           />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="line-opacity-slider">Line Opacity: {lineOpacity}%</Label>
+          <Slider
+            id="line-opacity-slider"
+            min={0}
+            max={100}
+            step={1}
+            value={[lineOpacity]}
+            onValueChange={(val) => setLineOpacity(val[0])}
+          />
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="zoom-slider">Zoom: {zoomLevel}%</Label>
           <Slider
             id="zoom-slider"
@@ -129,7 +144,7 @@ export const GridControls = ({
             checked={showColNumbers}
             onCheckedChange={(checked) => setShowColNumbers(checked as boolean)}
           />
-          <Label htmlFor="show-col-numbers">Show Column Numbers</Label>
+          <Label htmlFor="show-col-numbers">Show Column Letters</Label>
         </div>
         <div className="flex items-center space-x-2">
           <Checkbox

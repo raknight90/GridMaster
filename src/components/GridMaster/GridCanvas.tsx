@@ -9,13 +9,14 @@ interface GridCanvasProps {
   cols: number;
   lineThickness: number;
   lineColor: string;
+  lineOpacity: number; // New prop for line opacity
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
   gridPosition: { x: number; y: number };
   setGridPosition: (pos: { x: number; y: number }) => void;
   zoomLevel: number;
-  showImage: boolean; // New prop for image visibility
+  showImage: boolean;
 }
 
 export const GridCanvas = ({
@@ -24,13 +25,14 @@ export const GridCanvas = ({
   cols,
   lineThickness,
   lineColor,
+  lineOpacity, // Destructure lineOpacity
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
   gridPosition,
   setGridPosition,
   zoomLevel,
-  showImage, // Destructure showImage
+  showImage,
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -71,6 +73,7 @@ export const GridCanvas = ({
 
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
+  const opacityStyle = { opacity: lineOpacity / 100 };
 
   return (
     <div
@@ -79,7 +82,7 @@ export const GridCanvas = ({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp} // Stop dragging if mouse leaves the canvas
+      onMouseLeave={handleMouseUp}
     >
       <div
         className="absolute"
@@ -90,12 +93,12 @@ export const GridCanvas = ({
           height: currentImageHeight,
         }}
       >
-        {showImage && ( // Conditionally render the image
+        {showImage && (
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
         )}
 
         {/* Grid Lines */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none" style={opacityStyle}>
           {Array.from({ length: rows + 1 }).map((_, i) => (
             <div
               key={`h-line-${i}`}
@@ -133,10 +136,10 @@ export const GridCanvas = ({
                       height: cellHeight,
                       borderTop: `${lineThickness}px solid ${lineColor}`,
                       transformOrigin: "top left",
-                      transform: "rotate(45deg) scaleX(1.414)", // sqrt(2) for diagonal length
+                      transform: "rotate(45deg) scaleX(1.414)",
                       position: "absolute",
                       pointerEvents: "none",
-                      opacity: 0.5, // Make diagonals slightly less prominent
+                      opacity: 0.5,
                     }}
                   />
                   <div
@@ -170,6 +173,7 @@ export const GridCanvas = ({
                     transform: "translateY(-50%)",
                     height: cellHeight,
                     lineHeight: `${cellHeight}px`,
+                    opacity: lineOpacity / 100, // Apply opacity
                   }}
                 >
                   {i + 1}
@@ -178,7 +182,7 @@ export const GridCanvas = ({
             </div>
           )}
 
-          {/* Column Numbers */}
+          {/* Column Letters */}
           {showColNumbers && (
             <div className="absolute top-0 left-0 w-full h-10 -translate-y-full pt-2 text-center pointer-events-none">
               {Array.from({ length: cols }).map((_, i) => (
@@ -189,9 +193,10 @@ export const GridCanvas = ({
                     left: `${(i + 0.5) * cellWidth}px`,
                     transform: "translateX(-50%)",
                     width: cellWidth,
+                    opacity: lineOpacity / 100, // Apply opacity
                   }}
                 >
-                  {i + 1}
+                  {String.fromCharCode(65 + i)} {/* Convert number to letter */}
                 </div>
               ))}
             </div>
