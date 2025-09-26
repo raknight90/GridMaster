@@ -67,43 +67,46 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
 
-  // Define mouse move handler as a stable callback
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const dx = e.clientX - startDragMousePositionRef.current.x;
-    const dy = e.clientY - startDragMousePositionRef.current.y;
+  // Store event handler functions in refs to ensure stable references
+  const handleMouseMoveRef = useRef((e: MouseEvent) => {
+    // This function will be updated by useEffect below
+  });
 
-    setImageOffset({
-      x: startImageOffsetRef.current.x + dx,
-      y: startImageOffsetRef.current.y + dy,
-    });
+  const handleMouseUpRef = useRef(() => {
+    // This function will be updated by useEffect below
+  });
+
+  // Update handleMouseMoveRef.current whenever setImageOffset changes
+  useEffect(() => {
+    handleMouseMoveRef.current = (e: MouseEvent) => {
+      const dx = e.clientX - startDragMousePositionRef.current.x;
+      const dy = e.clientY - startDragMousePositionRef.current.y;
+      setImageOffset({
+        x: startImageOffsetRef.current.x + dx,
+        y: startImageOffsetRef.current.y + dy,
+      });
+    };
   }, [setImageOffset]);
 
-  // Define mouse up handler as a stable callback
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    // Listeners will be removed by the useEffect cleanup function
-  }, []);
-
-  // Effect to manage global event listeners for dragging
+  // Update handleMouseUpRef.current whenever setIsDragging changes
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-
-    // Cleanup function: remove listeners when dragging stops or component unmounts
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+    handleMouseUpRef.current = () => {
+      setIsDragging(false);
+      window.removeEventListener("mousemove", handleMouseMoveRef.current);
+      window.removeEventListener("mouseup", handleMouseUpRef.current);
     };
-  }, [isDragging, handleMouseMove, handleMouseUp]); // Dependencies for this effect
+  }, [setIsDragging]);
 
   // Mouse down handler to initiate dragging
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
     startDragMousePositionRef.current = { x: e.clientX, y: e.clientY };
     startImageOffsetRef.current = imageOffsetRef.current; // Use the latest imageOffset from ref
-  }, []);
+
+    // Attach global listeners using the stable ref functions
+    window.addEventListener("mousemove", handleMouseMoveRef.current);
+    window.addEventListener("mouseup", handleMouseUpRef.current);
+  }, []); // No dependencies needed here as it uses stable refs for handlers
 
   return (
     <div
