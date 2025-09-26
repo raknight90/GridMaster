@@ -14,6 +14,7 @@ interface GridCanvasProps {
   showDiagonalLines: boolean;
   gridPosition: { x: number; y: number };
   setGridPosition: (pos: { x: number; y: number }) => void;
+  zoomLevel: number; // New prop for zoom level
 }
 
 export const GridCanvas = ({
@@ -27,19 +28,24 @@ export const GridCanvas = ({
   showDiagonalLines,
   gridPosition,
   setGridPosition,
+  zoomLevel,
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const img = new Image();
     img.src = imageSrc;
     img.onload = () => {
-      setImageDimensions({ width: img.width, height: img.height });
+      setOriginalImageDimensions({ width: img.width, height: img.height });
     };
   }, [imageSrc]);
+
+  const zoomFactor = zoomLevel / 100;
+  const currentImageWidth = originalImageDimensions.width * zoomFactor;
+  const currentImageHeight = originalImageDimensions.height * zoomFactor;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -61,8 +67,8 @@ export const GridCanvas = ({
     setIsDragging(false);
   };
 
-  const cellWidth = imageDimensions.width / cols;
-  const cellHeight = imageDimensions.height / rows;
+  const cellWidth = currentImageWidth / cols;
+  const cellHeight = currentImageHeight / rows;
 
   return (
     <div
@@ -78,11 +84,11 @@ export const GridCanvas = ({
         style={{
           left: gridPosition.x,
           top: gridPosition.y,
-          width: imageDimensions.width,
-          height: imageDimensions.height,
+          width: currentImageWidth,
+          height: currentImageHeight,
         }}
       >
-        <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: imageDimensions.width, height: imageDimensions.height }} />
+        <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
 
         {/* Grid Lines */}
         <div className="absolute inset-0 pointer-events-none">

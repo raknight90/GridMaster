@@ -17,6 +17,7 @@ export const GridMasterApp = () => {
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
   const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState(100); // New state for zoom level (100% by default)
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -42,6 +43,8 @@ export const GridMasterApp = () => {
               setShowColNumbers={setShowColNumbers}
               showDiagonalLines={showDiagonalLines}
               setShowDiagonalLines={setShowDiagonalLines}
+              zoomLevel={zoomLevel} // Pass zoomLevel
+              setZoomLevel={setZoomLevel} // Pass setZoomLevel
             />
           </div>
           <div className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted">
@@ -57,6 +60,7 @@ export const GridMasterApp = () => {
                 showDiagonalLines={showDiagonalLines}
                 gridPosition={gridPosition}
                 setGridPosition={setGridPosition}
+                zoomLevel={zoomLevel} // Pass zoomLevel
               />
             ) : (
               <p className="text-muted-foreground">Upload an image to get started!</p>

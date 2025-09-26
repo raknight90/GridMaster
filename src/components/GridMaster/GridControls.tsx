@@ -22,6 +22,8 @@ interface GridControlsProps {
   setShowColNumbers: (show: boolean) => void;
   showDiagonalLines: boolean;
   setShowDiagonalLines: (show: boolean) => void;
+  zoomLevel: number; // New prop for zoom level
+  setZoomLevel: (zoom: number) => void; // New prop for setting zoom level
 }
 
 export const GridControls = ({
@@ -39,6 +41,8 @@ export const GridControls = ({
   setShowColNumbers,
   showDiagonalLines,
   setShowDiagonalLines,
+  zoomLevel,
+  setZoomLevel,
 }: GridControlsProps) => {
   return (
     <Card className="bg-card text-card-foreground">
@@ -87,6 +91,17 @@ export const GridControls = ({
             value={lineColor}
             onChange={(e) => setLineColor(e.target.value)}
             className="h-10 w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="zoom-slider">Zoom: {zoomLevel}%</Label>
+          <Slider
+            id="zoom-slider"
+            min={50}
+            max={300}
+            step={10}
+            value={[zoomLevel]}
+            onValueChange={(val) => setZoomLevel(val[0])}
           />
         </div>
         <div className="flex items-center space-x-2">
