@@ -40,9 +40,17 @@ export const GridCanvas = ({
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [startDragMousePosition, setStartDragMousePosition] = useState({ x: 0, y: 0 });
-  const [startImageOffset, setStartImageOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false); // State to manage cursor style
+
+  // Use refs to store mutable values that don't trigger re-renders
+  const startDragMousePositionRef = useRef({ x: 0, y: 0 });
+  const startImageOffsetRef = useRef({ x: 0, y: 0 });
+  const imageOffsetRef = useRef(imageOffset); // Keep a ref to the latest imageOffset
+
+  // Update imageOffsetRef whenever imageOffset state changes
+  useEffect(() => {
+    imageOffsetRef.current = imageOffset;
+  }, [imageOffset]);
 
   useEffect(() => {
     const img = new Image();
@@ -59,42 +67,39 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStartDragMousePosition({ x: e.clientX, y: e.clientY });
-    setStartImageOffset({ x: imageOffset.x, y: imageOffset.y });
-  }, [imageOffset]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) return;
-
-    const dx = e.clientX - startDragMousePosition.x;
-    const dy = e.clientY - startDragMousePosition.y;
+  // Define mouse move handler as a stable callback
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const dx = e.clientX - startDragMousePositionRef.current.x;
+    const dy = e.clientY - startDragMousePositionRef.current.y;
 
     setImageOffset({
-      x: startImageOffset.x + dx,
-      y: startImageOffset.y + dy,
+      x: startImageOffsetRef.current.x + dx,
+      y: startImageOffsetRef.current.y + dy,
     });
-  }, [isDragging, startDragMousePosition, startImageOffset, setImageOffset]);
+  }, [setImageOffset]); // setImageOffset is a stable function from React
 
+  // Define mouse up handler as a stable callback
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    setIsDragging(false); // Stop dragging visually
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  }, [handleMouseMove]); // handleMouseMove is a stable ref here
 
-  // Add global mouseup listener to stop dragging even if mouse leaves the canvas
-  useEffect(() => {
+  // Define mouse down handler as a stable callback
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    setIsDragging(true); // Start dragging visually
+    startDragMousePositionRef.current = { x: e.clientX, y: e.clientY };
+    startImageOffsetRef.current = imageOffsetRef.current; // Use the latest imageOffset from ref
+
+    // Attach global listeners when dragging starts
+    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseUp]);
+  }, [handleMouseMove, handleMouseUp]); // handleMouseMove and handleMouseUp are stable refs here
 
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full overflow-hidden"
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
       style={{ cursor: isDragging ? "grabbing" : "grab" }}
     >
       <div
@@ -105,7 +110,7 @@ export const GridCanvas = ({
           width: currentImageWidth,
           height: currentImageHeight,
         }}
-        onMouseDown={handleMouseDown}
+        onMouseDown={handleMouseDown} // Only onMouseDown on this element
       >
         {showImage && (
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
