@@ -14,8 +14,7 @@ interface GridCanvasProps {
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
-  gridPosition: { x: number; y: number };
-  setGridPosition: (pos: { x: number; y: number }) => void;
+  gridPosition: { x: number; y: number }; // Still passed for consistent rendering logic, but will be fixed at {0,0}
   zoomLevel: number;
   showImage: boolean;
 }
@@ -31,14 +30,11 @@ export const GridCanvas = ({
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
-  gridPosition,
-  setGridPosition,
+  gridPosition, // This will now always be { x: 0, y: 0 }
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartOffset, setDragStartOffset] = useState({ x: 0, y: 0 });
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -53,26 +49,6 @@ export const GridCanvas = ({
   const currentImageWidth = originalImageDimensions.width * zoomFactor;
   const currentImageHeight = originalImageDimensions.height * zoomFactor;
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStartOffset({
-      x: e.clientX - gridPosition.x,
-      y: e.clientY - gridPosition.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setGridPosition({
-      x: e.clientX - dragStartOffset.x,
-      y: e.clientY - dragStartOffset.y,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
   const opacityStyle = { opacity: lineOpacity / 100 };
@@ -80,11 +56,7 @@ export const GridCanvas = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden cursor-grab active:cursor-grabbing"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      className="relative w-full h-full overflow-hidden" // Removed cursor styles
     >
       <div
         className="absolute"

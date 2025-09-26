@@ -19,8 +19,8 @@ interface GridControlsProps {
   setLineColor: (color: string) => void;
   lineOpacity: number;
   setLineOpacity: (opacity: number) => void;
-  labelColor: string; // New prop for label color
-  setLabelColor: (color: string) => void; // New prop for setting label color
+  labelColor: string;
+  setLabelColor: (color: string) => void;
   showRowNumbers: boolean;
   setShowRowNumbers: (show: boolean) => void;
   showColNumbers: boolean;
@@ -30,7 +30,6 @@ interface GridControlsProps {
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
-  onResetGridPosition: () => void; // New prop for resetting grid position
   onExport: () => void;
   imageSrc: string | null;
   showImage: boolean;
@@ -48,8 +47,8 @@ export const GridControls = ({
   setLineColor,
   lineOpacity,
   setLineOpacity,
-  labelColor, // Destructure labelColor
-  setLabelColor, // Destructure setLabelColor
+  labelColor,
+  setLabelColor,
   showRowNumbers,
   setShowRowNumbers,
   showColNumbers,
@@ -59,7 +58,6 @@ export const GridControls = ({
   zoomLevel,
   setZoomLevel,
   onReset,
-  onResetGridPosition, // Destructure onResetGridPosition
   onExport,
   imageSrc,
   showImage,
@@ -178,9 +176,6 @@ export const GridControls = ({
           />
           <Label htmlFor="show-image">Show Image</Label>
         </div>
-        <Button onClick={onResetGridPosition} className="w-full mt-4">
-          Reset Grid Position
-        </Button>
         <Button onClick={onReset} className="w-full mt-2">
           Reset All Settings
         </Button>

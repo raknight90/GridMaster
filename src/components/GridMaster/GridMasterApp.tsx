@@ -15,11 +15,10 @@ export const GridMasterApp = () => {
   const [lineThickness, setLineThickness] = useState(2);
   const [lineColor, setLineColor] = useState("#ffffff"); // Default white for dark theme
   const [lineOpacity, setLineOpacity] = useState(100);
-  const [labelColor, setLabelColor] = useState("#ffffff"); // New state for label color
+  const [labelColor, setLabelColor] = useState("#ffffff");
   const [showRowNumbers, setShowRowNumbers] = useState(false);
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
-  const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
   const [zoomLevel, setZoomLevel] = useState(100);
   const [triggerExport, setTriggerExport] = useState(false);
   const [showImage, setShowImage] = useState(true);
@@ -30,17 +29,12 @@ export const GridMasterApp = () => {
     setLineThickness(2);
     setLineColor("#ffffff");
     setLineOpacity(100);
-    setLabelColor("#ffffff"); // Reset label color
+    setLabelColor("#ffffff");
     setShowRowNumbers(false);
     setShowColNumbers(false);
     setShowDiagonalLines(false);
-    setGridPosition({ x: 0, y: 0 });
     setZoomLevel(100);
     setShowImage(true);
-  }, []);
-
-  const resetGridPosition = useCallback(() => {
-    setGridPosition({ x: 0, y: 0 });
   }, []);
 
   const handleExport = () => {
@@ -52,6 +46,9 @@ export const GridMasterApp = () => {
   const handleExportComplete = () => {
     setTriggerExport(false);
   };
+
+  // Fixed grid position as dragging is removed
+  const fixedGridPosition = { x: 0, y: 0 };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -73,8 +70,8 @@ export const GridMasterApp = () => {
               setLineColor={setLineColor}
               lineOpacity={lineOpacity}
               setLineOpacity={setLineOpacity}
-              labelColor={labelColor} // Pass labelColor
-              setLabelColor={setLabelColor} // Pass setLabelColor
+              labelColor={labelColor}
+              setLabelColor={setLabelColor}
               showRowNumbers={showRowNumbers}
               setShowRowNumbers={setShowRowNumbers}
               showColNumbers={showColNumbers}
@@ -84,7 +81,6 @@ export const GridMasterApp = () => {
               zoomLevel={zoomLevel}
               setZoomLevel={setZoomLevel}
               onReset={resetGridSettings}
-              onResetGridPosition={resetGridPosition} // Pass resetGridPosition
               onExport={handleExport}
               imageSrc={imageSrc}
               showImage={showImage}
@@ -100,12 +96,11 @@ export const GridMasterApp = () => {
                 lineThickness={lineThickness}
                 lineColor={lineColor}
                 lineOpacity={lineOpacity}
-                labelColor={labelColor} // Pass labelColor
+                labelColor={labelColor}
                 showRowNumbers={showRowNumbers}
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
-                gridPosition={gridPosition}
-                setGridPosition={setGridPosition}
+                gridPosition={fixedGridPosition} // Always pass fixed position
                 zoomLevel={zoomLevel}
                 showImage={showImage}
               />
@@ -123,11 +118,11 @@ export const GridMasterApp = () => {
         lineThickness={lineThickness}
         lineColor={lineColor}
         lineOpacity={lineOpacity}
-        labelColor={labelColor} // Pass labelColor
+        labelColor={labelColor}
         showRowNumbers={showRowNumbers}
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
-        gridPosition={gridPosition}
+        gridPosition={fixedGridPosition} // Always pass fixed position
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}
