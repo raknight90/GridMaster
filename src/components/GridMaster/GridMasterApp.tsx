@@ -26,7 +26,8 @@ export const GridMasterApp = () => {
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
   const [diagonalLineOpacity, setDiagonalLineOpacity] = useState(50);
   const [zoomLevel, setZoomLevel] = useState(100);
-  const [imageOffset, setImageOffset] = useState({ x: 0, y: 0 }); // New state for image position
+  const [imageOffsetX, setImageOffsetX] = useState(0); // Separate X offset state
+  const [imageOffsetY, setImageOffsetY] = useState(0); // Separate Y offset state
   const [triggerExport, setTriggerExport] = useState(false);
   const [showImage, setShowImage] = useState(true);
 
@@ -53,7 +54,8 @@ export const GridMasterApp = () => {
       img.onload = () => {
         setOriginalImageDimensions({ width: img.width, height: img.height });
         // Reset offset and zoom when new image is loaded
-        setImageOffset({ x: 0, y: 0 });
+        setImageOffsetX(0);
+        setImageOffsetY(0);
         setZoomLevel(100);
       };
     } else {
@@ -73,7 +75,8 @@ export const GridMasterApp = () => {
     setShowDiagonalLines(false);
     setDiagonalLineOpacity(50);
     setZoomLevel(100);
-    setImageOffset({ x: 0, y: 0 }); // Reset image offset
+    setImageOffsetX(0); // Reset image X offset
+    setImageOffsetY(0); // Reset image Y offset
     setShowImage(true);
   }, []);
 
@@ -100,10 +103,8 @@ export const GridMasterApp = () => {
     }
 
     setZoomLevel(newZoomLevel);
-    setImageOffset({
-      x: (canvasContainerDimensions.width - scaledWidth) / 2,
-      y: (canvasContainerDimensions.height - scaledHeight) / 2,
-    });
+    setImageOffsetX((canvasContainerDimensions.width - scaledWidth) / 2);
+    setImageOffsetY((canvasContainerDimensions.height - scaledHeight) / 2);
   }, [imageSrc, originalImageDimensions, canvasContainerDimensions]);
 
   const handleCenterImageOnCanvas = useCallback(() => {
@@ -113,10 +114,8 @@ export const GridMasterApp = () => {
     const currentImageWidth = originalImageDimensions.width * zoomFactor;
     const currentImageHeight = originalImageDimensions.height * zoomFactor;
 
-    setImageOffset({
-      x: (canvasContainerDimensions.width - currentImageWidth) / 2,
-      y: (canvasContainerDimensions.height - currentImageHeight) / 2,
-    });
+    setImageOffsetX((canvasContainerDimensions.width - currentImageWidth) / 2);
+    setImageOffsetY((canvasContainerDimensions.height - currentImageHeight) / 2);
   }, [imageSrc, originalImageDimensions, canvasContainerDimensions, zoomLevel]);
 
   const handleExport = () => {
@@ -128,6 +127,18 @@ export const GridMasterApp = () => {
   const handleExportComplete = () => {
     setTriggerExport(false);
   };
+
+  // Calculate dynamic slider bounds for image offset
+  const zoomFactor = zoomLevel / 100;
+  const currentImageWidth = originalImageDimensions.width * zoomFactor;
+  const currentImageHeight = originalImageDimensions.height * zoomFactor;
+
+  // Allow image to be moved fully off-screen in any direction
+  const minOffsetX = -currentImageWidth;
+  const maxOffsetX = canvasContainerDimensions.width;
+  const minOffsetY = -currentImageHeight;
+  const maxOffsetY = canvasContainerDimensions.height;
+
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -171,6 +182,14 @@ export const GridMasterApp = () => {
               setShowImage={setShowImage}
               onFitImage={handleFitImageToCanvas}
               onCenterImage={handleCenterImageOnCanvas}
+              imageOffsetX={imageOffsetX} // Pass X offset
+              setImageOffsetX={setImageOffsetX} // Pass X setter
+              imageOffsetY={imageOffsetY} // Pass Y offset
+              setImageOffsetY={setImageOffsetY} // Pass Y setter
+              minOffsetX={minOffsetX}
+              maxOffsetX={maxOffsetX}
+              minOffsetY={minOffsetY}
+              maxOffsetY={maxOffsetY}
             />
           </div>
           <div
@@ -190,8 +209,7 @@ export const GridMasterApp = () => {
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
                 diagonalLineOpacity={diagonalLineOpacity}
-                imageOffset={imageOffset}
-                setImageOffset={setImageOffset}
+                imageOffset={{ x: imageOffsetX, y: imageOffsetY }} // Pass combined offset
                 zoomLevel={zoomLevel}
                 showImage={showImage}
               />
@@ -214,7 +232,7 @@ export const GridMasterApp = () => {
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
         diagonalLineOpacity={diagonalLineOpacity}
-        imageOffset={imageOffset}
+        imageOffset={{ x: imageOffsetX, y: imageOffsetY }} // Pass combined offset
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}

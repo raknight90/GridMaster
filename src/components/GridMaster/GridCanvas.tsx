@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface GridCanvasProps {
@@ -15,8 +15,7 @@ interface GridCanvasProps {
   showColNumbers: boolean;
   showDiagonalLines: boolean;
   diagonalLineOpacity: number;
-  imageOffset: { x: number; y: number };
-  setImageOffset: (offset: { x: number; y: number }) => void;
+  imageOffset: { x: number; y: number }; // Now controlled externally
   zoomLevel: number;
   showImage: boolean;
 }
@@ -33,18 +32,12 @@ export const GridCanvas = ({
   showColNumbers,
   showDiagonalLines,
   diagonalLineOpacity,
-  imageOffset,
-  setImageOffset,
+  imageOffset, // Directly use this prop for positioning
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Use refs to store mutable values that don't trigger re-renders
-  const startDragMousePositionRef = useRef({ x: 0, y: 0 });
-  const startImageOffsetRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const img = new Image();
@@ -61,48 +54,11 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
 
-  // Define mouse move handler as a stable callback
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const dx = e.clientX - startDragMousePositionRef.current.x;
-    const dy = e.clientY - startDragMousePositionRef.current.y;
-
-    setImageOffset({
-      x: startImageOffsetRef.current.x + dx,
-      y: startImageOffsetRef.current.y + dy,
-    });
-  }, [setImageOffset]); // setImageOffset is a stable function from React
-
-  // Define mouse up handler as a stable callback
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Effect to manage global event listeners for dragging
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-
-    // Cleanup function: remove listeners when dragging stops or component unmounts
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp]); // Dependencies for this effect
-
-  // Mouse down handler to initiate dragging
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsDragging(true);
-    startDragMousePositionRef.current = { x: e.clientX, y: e.clientY };
-    startImageOffsetRef.current = imageOffset; // Capture current imageOffset at start of drag
-  }, [imageOffset]); // imageOffset is a dependency here to capture its current value
-
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full overflow-hidden"
-      style={{ cursor: isDragging ? "grabbing" : "grab" }}
+      // Removed cursor style and onMouseDown handler
     >
       <div
         className="absolute"
@@ -112,7 +68,7 @@ export const GridCanvas = ({
           width: currentImageWidth,
           height: currentImageHeight,
         }}
-        onMouseDown={handleMouseDown}
+        // Removed onMouseDown handler
       >
         {showImage && (
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />

@@ -36,8 +36,16 @@ interface GridControlsProps {
   imageSrc: string | null;
   showImage: boolean;
   setShowImage: (show: boolean) => void;
-  onFitImage: () => void; // New prop
-  onCenterImage: () => void; // New prop
+  onFitImage: () => void;
+  onCenterImage: () => void;
+  imageOffsetX: number; // New prop for X offset
+  setImageOffsetX: (offset: number) => void; // New prop for X setter
+  imageOffsetY: number; // New prop for Y offset
+  setImageOffsetY: (offset: number) => void; // New prop for Y setter
+  minOffsetX: number; // New prop for X slider min
+  maxOffsetX: number; // New prop for X slider max
+  minOffsetY: number; // New prop for Y slider min
+  maxOffsetY: number; // New prop for Y slider max
 }
 
 export const GridControls = ({
@@ -68,8 +76,16 @@ export const GridControls = ({
   imageSrc,
   showImage,
   setShowImage,
-  onFitImage, // New prop
-  onCenterImage, // New prop
+  onFitImage,
+  onCenterImage,
+  imageOffsetX,
+  setImageOffsetX,
+  imageOffsetY,
+  setImageOffsetY,
+  minOffsetX,
+  maxOffsetX,
+  minOffsetY,
+  maxOffsetY,
 }: GridControlsProps) => {
   const isImageLoaded = !!imageSrc;
 
@@ -167,6 +183,35 @@ export const GridControls = ({
             onValueChange={(val) => setZoomLevel(val[0])}
           />
         </div>
+
+        {/* New Image Offset Sliders */}
+        {isImageLoaded && (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="image-offset-x-slider">Image X Offset: {imageOffsetX}px</Label>
+              <Slider
+                id="image-offset-x-slider"
+                min={minOffsetX}
+                max={maxOffsetX}
+                step={1}
+                value={[imageOffsetX]}
+                onValueChange={(val) => setImageOffsetX(val[0])}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="image-offset-y-slider">Image Y Offset: {imageOffsetY}px</Label>
+              <Slider
+                id="image-offset-y-slider"
+                min={minOffsetY}
+                max={maxOffsetY}
+                step={1}
+                value={[imageOffsetY]}
+                onValueChange={(val) => setImageOffsetY(val[0])}
+              />
+            </div>
+          </>
+        )}
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="show-row-numbers"
