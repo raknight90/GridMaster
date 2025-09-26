@@ -14,8 +14,8 @@ interface GridCanvasProps {
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
-  diagonalLineOpacity: number; // New prop
-  gridPosition: { x: number; y: number }; // Still passed for consistent rendering logic, but will be fixed at {0,0}
+  diagonalLineOpacity: number;
+  imageOffset: { x: number; y: number }; // Changed from gridPosition
   zoomLevel: number;
   showImage: boolean;
 }
@@ -31,8 +31,8 @@ export const GridCanvas = ({
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
-  diagonalLineOpacity, // Use new prop
-  gridPosition, // This will now always be { x: 0, y: 0 }
+  diagonalLineOpacity,
+  imageOffset, // Use new prop
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
@@ -54,7 +54,7 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
   const opacityStyle = { opacity: lineOpacity / 100 };
-  const diagonalOpacityStyle = { opacity: diagonalLineOpacity / 100 }; // New style for diagonal lines
+  const diagonalOpacityStyle = { opacity: diagonalLineOpacity / 100 };
 
   return (
     <div
@@ -64,8 +64,8 @@ export const GridCanvas = ({
       <div
         className="absolute"
         style={{
-          left: gridPosition.x,
-          top: gridPosition.y,
+          left: imageOffset.x, // Use imageOffset.x
+          top: imageOffset.y, // Use imageOffset.y
           width: currentImageWidth,
           height: currentImageHeight,
         }}
@@ -116,7 +116,7 @@ export const GridCanvas = ({
                       transform: "rotate(45deg) scaleX(1.414)",
                       position: "absolute",
                       pointerEvents: "none",
-                      ...diagonalOpacityStyle, // Apply new diagonal opacity
+                      ...diagonalOpacityStyle,
                     }}
                   />
                   <div
@@ -131,7 +131,7 @@ export const GridCanvas = ({
                       transform: "rotate(-45deg) scaleX(1.414)",
                       position: "absolute",
                       pointerEvents: "none",
-                      ...diagonalOpacityStyle, // Apply new diagonal opacity
+                      ...diagonalOpacityStyle,
                     }}
                   />
                 </React.Fragment>
@@ -142,7 +142,7 @@ export const GridCanvas = ({
           {showRowNumbers && showColNumbers && (
             <div
               key="combined-label-0-0"
-              className="absolute text-sm font-semibold flex items-start justify-start p-1" // Adjusted alignment and padding
+              className="absolute text-sm font-semibold flex items-start justify-start p-1"
               style={{
                 top: 0,
                 left: 0,
@@ -160,11 +160,11 @@ export const GridCanvas = ({
           {showRowNumbers && (
             <div className="absolute top-0 left-0 h-full w-full pointer-events-none">
               {Array.from({ length: rows }).map((_, i) => {
-                if (i === 0 && showColNumbers) return null; // Skip if A/1 is handled
+                if (i === 0 && showColNumbers) return null;
                 return (
                   <div
                     key={`row-num-${i}`}
-                    className="absolute text-sm font-semibold flex items-center justify-start pl-1" // Adjusted alignment and padding
+                    className="absolute text-sm font-semibold flex items-center justify-start pl-1"
                     style={{
                       top: `${i * cellHeight}px`,
                       left: 0,
@@ -185,11 +185,11 @@ export const GridCanvas = ({
           {showColNumbers && (
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
               {Array.from({ length: cols }).map((_, i) => {
-                if (i === 0 && showRowNumbers) return null; // Skip if A/1 is handled
+                if (i === 0 && showRowNumbers) return null;
                 return (
                   <div
                     key={`col-num-${i}`}
-                    className="absolute text-sm font-semibold flex items-start justify-center pt-1" // Adjusted alignment and padding
+                    className="absolute text-sm font-semibold flex items-start justify-center pt-1"
                     style={{
                       top: 0,
                       left: `${i * cellWidth}px`,
@@ -199,7 +199,7 @@ export const GridCanvas = ({
                       color: labelColor,
                     }}
                   >
-                    {String.fromCharCode(65 + i)} {/* Convert number to letter */}
+                    {String.fromCharCode(65 + i)}
                   </div>
                 );
               })}

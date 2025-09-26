@@ -13,8 +13,8 @@ interface GridExporterProps {
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
-  diagonalLineOpacity: number; // New prop
-  gridPosition: { x: number; y: number };
+  diagonalLineOpacity: number;
+  imageOffset: { x: number; y: number }; // Changed from gridPosition
   zoomLevel: number;
   triggerExport: boolean;
   onExportComplete: () => void;
@@ -31,8 +31,8 @@ export const GridExporter = ({
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
-  diagonalLineOpacity, // Use new prop
-  gridPosition,
+  diagonalLineOpacity,
+  imageOffset, // Use new prop
   zoomLevel,
   triggerExport,
   onExportComplete,
@@ -63,7 +63,7 @@ export const GridExporter = ({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw the image
-      ctx.drawImage(img, gridPosition.x, gridPosition.y, scaledImageWidth, scaledImageHeight);
+      ctx.drawImage(img, imageOffset.x, imageOffset.y, scaledImageWidth, scaledImageHeight); // Use imageOffset
 
       // Apply line opacity
       ctx.globalAlpha = lineOpacity / 100;
@@ -77,19 +77,19 @@ export const GridExporter = ({
 
       // Vertical lines
       for (let i = 0; i <= cols; i++) {
-        const x = gridPosition.x + i * cellWidth;
+        const x = imageOffset.x + i * cellWidth; // Use imageOffset
         ctx.beginPath();
-        ctx.moveTo(x, gridPosition.y);
-        ctx.lineTo(x, gridPosition.y + scaledImageHeight);
+        ctx.moveTo(x, imageOffset.y); // Use imageOffset
+        ctx.lineTo(x, imageOffset.y + scaledImageHeight); // Use imageOffset
         ctx.stroke();
       }
 
       // Horizontal lines
       for (let i = 0; i <= rows; i++) {
-        const y = gridPosition.y + i * cellHeight;
+        const y = imageOffset.y + i * cellHeight; // Use imageOffset
         ctx.beginPath();
-        ctx.moveTo(gridPosition.x, y);
-        ctx.lineTo(gridPosition.x + scaledImageWidth, y);
+        ctx.moveTo(imageOffset.x, y); // Use imageOffset
+        ctx.lineTo(imageOffset.x + scaledImageWidth, y); // Use imageOffset
         ctx.stroke();
       }
 
@@ -98,12 +98,12 @@ export const GridExporter = ({
         ctx.save();
         ctx.strokeStyle = lineColor;
         ctx.lineWidth = lineThickness;
-        ctx.globalAlpha = diagonalLineOpacity / 100; // Use the new diagonalLineOpacity
+        ctx.globalAlpha = diagonalLineOpacity / 100;
 
         for (let rIdx = 0; rIdx < rows; rIdx++) {
           for (let cIdx = 0; cIdx < cols; cIdx++) {
-            const startX = gridPosition.x + cIdx * cellWidth;
-            const startY = gridPosition.y + rIdx * cellHeight;
+            const startX = imageOffset.x + cIdx * cellWidth; // Use imageOffset
+            const startY = imageOffset.y + rIdx * cellHeight; // Use imageOffset
 
             // Top-left to bottom-right diagonal
             ctx.beginPath();
@@ -121,18 +121,18 @@ export const GridExporter = ({
         ctx.restore();
       }
 
-      ctx.fillStyle = labelColor; // Use labelColor for numbers
+      ctx.fillStyle = labelColor;
       ctx.font = "14px Arial";
-      ctx.globalAlpha = lineOpacity / 100; // Apply opacity to text
-      const padding = 5; // Small padding from the edge
+      ctx.globalAlpha = lineOpacity / 100;
+      const padding = 5;
 
       // Handle the A/1 combined label
       if (showRowNumbers && showColNumbers) {
         ctx.save();
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        const x = gridPosition.x + padding;
-        const y = gridPosition.y + padding;
+        const x = imageOffset.x + padding; // Use imageOffset
+        const y = imageOffset.y + padding; // Use imageOffset
         ctx.fillText("A/1", x, y);
         ctx.restore();
       }
@@ -143,9 +143,9 @@ export const GridExporter = ({
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         for (let i = 0; i < rows; i++) {
-          if (i === 0 && showColNumbers) continue; // Skip if A/1 is handled
-          const y = gridPosition.y + (i * cellHeight) + (cellHeight / 2);
-          const x = gridPosition.x + padding;
+          if (i === 0 && showColNumbers) continue;
+          const y = imageOffset.y + (i * cellHeight) + (cellHeight / 2); // Use imageOffset
+          const x = imageOffset.x + padding; // Use imageOffset
           ctx.fillText((i + 1).toString(), x, y);
         }
         ctx.restore();
@@ -157,15 +157,14 @@ export const GridExporter = ({
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
         for (let i = 0; i < cols; i++) {
-          if (i === 0 && showRowNumbers) continue; // Skip if A/1 is handled
-          const x = gridPosition.x + (i * cellWidth) + (cellWidth / 2);
-          const y = gridPosition.y + padding;
+          if (i === 0 && showRowNumbers) continue;
+          const x = imageOffset.x + (i * cellWidth) + (cellWidth / 2); // Use imageOffset
+          const y = imageOffset.y + padding; // Use imageOffset
           ctx.fillText(String.fromCharCode(65 + i), x, y);
         }
         ctx.restore();
       }
 
-      // Reset globalAlpha for the rest of the canvas operations if any
       ctx.globalAlpha = 1;
 
       // Trigger download
@@ -191,8 +190,8 @@ export const GridExporter = ({
     showRowNumbers,
     showColNumbers,
     showDiagonalLines,
-    diagonalLineOpacity, // Include in dependency array
-    gridPosition,
+    diagonalLineOpacity,
+    imageOffset, // Include in dependency array
     zoomLevel,
     onExportComplete,
   ]);

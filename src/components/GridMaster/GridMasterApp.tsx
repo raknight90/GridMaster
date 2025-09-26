@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { ImageUpload } from "./ImageUpload";
@@ -11,6 +11,10 @@ import GridMasterIcon from "/gridmaster-icon.png"; // Import the icon
 
 export const GridMasterApp = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
+  const [canvasContainerDimensions, setCanvasContainerDimensions] = useState({ width: 0, height: 0 });
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+
   const [rows, setRows] = useState(10);
   const [cols, setCols] = useState(10);
   const [lineThickness, setLineThickness] = useState(2);
@@ -20,10 +24,42 @@ export const GridMasterApp = () => {
   const [showRowNumbers, setShowRowNumbers] = useState(false);
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
-  const [diagonalLineOpacity, setDiagonalLineOpacity] = useState(50); // New state for diagonal line opacity
+  const [diagonalLineOpacity, setDiagonalLineOpacity] = useState(50);
   const [zoomLevel, setZoomLevel] = useState(100);
+  const [imageOffset, setImageOffset] = useState({ x: 0, y: 0 }); // New state for image position
   const [triggerExport, setTriggerExport] = useState(false);
   const [showImage, setShowImage] = useState(true);
+
+  // Effect to get canvas container dimensions
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (canvasContainerRef.current) {
+        setCanvasContainerDimensions({
+          width: canvasContainerRef.current.offsetWidth,
+          height: canvasContainerRef.current.offsetHeight,
+        });
+      }
+    };
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("change", updateDimensions); // Changed to 'change' for consistency
+  }, []);
+
+  // Effect to load image and set original dimensions
+  useEffect(() => {
+    if (imageSrc) {
+      const img = new Image();
+      img.src = imageSrc;
+      img.onload = () => {
+        setOriginalImageDimensions({ width: img.width, height: img.height });
+        // Reset offset and zoom when new image is loaded
+        setImageOffset({ x: 0, y: 0 });
+        setZoomLevel(100);
+      };
+    } else {
+      setOriginalImageDimensions({ width: 0, height: 0 });
+    }
+  }, [imageSrc]);
 
   const resetGridSettings = useCallback(() => {
     setRows(10);
@@ -35,10 +71,53 @@ export const GridMasterApp = () => {
     setShowRowNumbers(false);
     setShowColNumbers(false);
     setShowDiagonalLines(false);
-    setDiagonalLineOpacity(50); // Reset diagonal line opacity
+    setDiagonalLineOpacity(50);
     setZoomLevel(100);
+    setImageOffset({ x: 0, y: 0 }); // Reset image offset
     setShowImage(true);
   }, []);
+
+  const handleFitImageToCanvas = useCallback(() => {
+    if (!imageSrc || originalImageDimensions.width === 0 || canvasContainerDimensions.width === 0) return;
+
+    const imageRatio = originalImageDimensions.width / originalImageDimensions.height;
+    const canvasRatio = canvasContainerDimensions.width / canvasContainerDimensions.height;
+
+    let newZoomLevel;
+    let scaledWidth;
+    let scaledHeight;
+
+    if (imageRatio > canvasRatio) {
+      // Image is wider than canvas, fit by width
+      scaledWidth = canvasContainerDimensions.width;
+      scaledHeight = scaledWidth / imageRatio;
+      newZoomLevel = (scaledWidth / originalImageDimensions.width) * 100;
+    } else {
+      // Image is taller than canvas, fit by height
+      scaledHeight = canvasContainerDimensions.height;
+      scaledWidth = scaledHeight * imageRatio;
+      newZoomLevel = (scaledHeight / originalImageDimensions.height) * 100;
+    }
+
+    setZoomLevel(newZoomLevel);
+    setImageOffset({
+      x: (canvasContainerDimensions.width - scaledWidth) / 2,
+      y: (canvasContainerDimensions.height - scaledHeight) / 2,
+    });
+  }, [imageSrc, originalImageDimensions, canvasContainerDimensions]);
+
+  const handleCenterImageOnCanvas = useCallback(() => {
+    if (!imageSrc || originalImageDimensions.width === 0 || canvasContainerDimensions.width === 0) return;
+
+    const zoomFactor = zoomLevel / 100;
+    const currentImageWidth = originalImageDimensions.width * zoomFactor;
+    const currentImageHeight = originalImageDimensions.height * zoomFactor;
+
+    setImageOffset({
+      x: (canvasContainerDimensions.width - currentImageWidth) / 2,
+      y: (canvasContainerDimensions.height - currentImageHeight) / 2,
+    });
+  }, [imageSrc, originalImageDimensions, canvasContainerDimensions, zoomLevel]);
 
   const handleExport = () => {
     if (imageSrc) {
@@ -49,9 +128,6 @@ export const GridMasterApp = () => {
   const handleExportComplete = () => {
     setTriggerExport(false);
   };
-
-  // Fixed grid position as dragging is removed
-  const fixedGridPosition = { x: 0, y: 0 };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -84,8 +160,8 @@ export const GridMasterApp = () => {
               setShowColNumbers={setShowColNumbers}
               showDiagonalLines={showDiagonalLines}
               setShowDiagonalLines={setShowDiagonalLines}
-              diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
-              setDiagonalLineOpacity={setDiagonalLineOpacity} // Pass new prop
+              diagonalLineOpacity={diagonalLineOpacity}
+              setDiagonalLineOpacity={setDiagonalLineOpacity}
               zoomLevel={zoomLevel}
               setZoomLevel={setZoomLevel}
               onReset={resetGridSettings}
@@ -93,9 +169,14 @@ export const GridMasterApp = () => {
               imageSrc={imageSrc}
               showImage={showImage}
               setShowImage={setShowImage}
+              onFitImage={handleFitImageToCanvas} // New prop
+              onCenterImage={handleCenterImageOnCanvas} // New prop
             />
           </div>
-          <div className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted">
+          <div
+            ref={canvasContainerRef} // Attach ref here
+            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted"
+          >
             {imageSrc ? (
               <GridCanvas
                 imageSrc={imageSrc}
@@ -108,8 +189,8 @@ export const GridMasterApp = () => {
                 showRowNumbers={showRowNumbers}
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
-                diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
-                gridPosition={fixedGridPosition} // Always pass fixed position
+                diagonalLineOpacity={diagonalLineOpacity}
+                imageOffset={imageOffset} // Pass new offset
                 zoomLevel={zoomLevel}
                 showImage={showImage}
               />
@@ -131,8 +212,8 @@ export const GridMasterApp = () => {
         showRowNumbers={showRowNumbers}
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
-        diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
-        gridPosition={fixedGridPosition} // Always pass fixed position
+        diagonalLineOpacity={diagonalLineOpacity}
+        imageOffset={imageOffset} // Pass new offset
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}

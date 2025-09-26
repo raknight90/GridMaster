@@ -27,8 +27,8 @@ interface GridControlsProps {
   setShowColNumbers: (show: boolean) => void;
   showDiagonalLines: boolean;
   setShowDiagonalLines: (show: boolean) => void;
-  diagonalLineOpacity: number; // New prop
-  setDiagonalLineOpacity: (opacity: number) => void; // New prop
+  diagonalLineOpacity: number;
+  setDiagonalLineOpacity: (opacity: number) => void;
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
@@ -36,6 +36,8 @@ interface GridControlsProps {
   imageSrc: string | null;
   showImage: boolean;
   setShowImage: (show: boolean) => void;
+  onFitImage: () => void; // New prop
+  onCenterImage: () => void; // New prop
 }
 
 export const GridControls = ({
@@ -57,8 +59,8 @@ export const GridControls = ({
   setShowColNumbers,
   showDiagonalLines,
   setShowDiagonalLines,
-  diagonalLineOpacity, // New prop
-  setDiagonalLineOpacity, // New prop
+  diagonalLineOpacity,
+  setDiagonalLineOpacity,
   zoomLevel,
   setZoomLevel,
   onReset,
@@ -66,7 +68,11 @@ export const GridControls = ({
   imageSrc,
   showImage,
   setShowImage,
+  onFitImage, // New prop
+  onCenterImage, // New prop
 }: GridControlsProps) => {
+  const isImageLoaded = !!imageSrc;
+
   return (
     <Card className="bg-card text-card-foreground">
       <CardHeader>
@@ -127,7 +133,7 @@ export const GridControls = ({
             onValueChange={(val) => setLineOpacity(val[0])}
           />
         </div>
-        {showDiagonalLines && ( // Only show if diagonal lines are enabled
+        {showDiagonalLines && (
           <div className="space-y-2">
             <Label htmlFor="diagonal-line-opacity-slider">Diagonal Line Opacity: {diagonalLineOpacity}%</Label>
             <Slider
@@ -193,10 +199,16 @@ export const GridControls = ({
           />
           <Label htmlFor="show-image">Show Image</Label>
         </div>
+        <Button onClick={onFitImage} className="w-full mt-2" disabled={!isImageLoaded}>
+          Fit Image to Canvas
+        </Button>
+        <Button onClick={onCenterImage} className="w-full mt-2" disabled={!isImageLoaded}>
+          Center Image on Canvas
+        </Button>
         <Button onClick={onReset} className="w-full mt-2">
           Reset All Settings
         </Button>
-        <Button onClick={onExport} className="w-full mt-2" disabled={!imageSrc}>
+        <Button onClick={onExport} className="w-full mt-2" disabled={!isImageLoaded}>
           Export Image
         </Button>
       </CardContent>
