@@ -16,7 +16,7 @@ interface GridCanvasProps {
   showDiagonalLines: boolean;
   diagonalLineOpacity: number;
   imageOffset: { x: number; y: number };
-  setImageOffset: (offset: { x: number; y: number }) => void; // New prop
+  setImageOffset: (offset: { x: number; y: number }) => void;
   zoomLevel: number;
   showImage: boolean;
 }
@@ -34,7 +34,7 @@ export const GridCanvas = ({
   showDiagonalLines,
   diagonalLineOpacity,
   imageOffset,
-  setImageOffset, // Use new prop
+  setImageOffset,
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
@@ -58,8 +58,6 @@ export const GridCanvas = ({
 
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
-  const opacityStyle = { opacity: lineOpacity / 100 };
-  const diagonalOpacityStyle = { opacity: diagonalLineOpacity / 100 };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
@@ -113,28 +111,35 @@ export const GridCanvas = ({
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
         )}
 
-        {/* Grid Lines */}
-        <div className="absolute inset-0 pointer-events-none" style={opacityStyle}>
+        {/* SVG Grid Lines */}
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          width={currentImageWidth}
+          height={currentImageHeight}
+          style={{ opacity: lineOpacity / 100 }}
+        >
+          {/* Horizontal Lines */}
           {Array.from({ length: rows + 1 }).map((_, i) => (
-            <div
+            <line
               key={`h-line-${i}`}
-              className="absolute w-full"
-              style={{
-                top: `${(i / rows) * 100}%`,
-                height: lineThickness,
-                backgroundColor: lineColor,
-              }}
+              x1="0"
+              y1={i * cellHeight}
+              x2={currentImageWidth}
+              y2={i * cellHeight}
+              stroke={lineColor}
+              strokeWidth={lineThickness}
             />
           ))}
+          {/* Vertical Lines */}
           {Array.from({ length: cols + 1 }).map((_, i) => (
-            <div
+            <line
               key={`v-line-${i}`}
-              className="absolute h-full"
-              style={{
-                left: `${(i / cols) * 100}%`,
-                width: lineThickness,
-                backgroundColor: lineColor,
-              }}
+              x1={i * cellWidth}
+              y1="0"
+              x2={i * cellWidth}
+              y2={currentImageHeight}
+              stroke={lineColor}
+              strokeWidth={lineThickness}
             />
           ))}
 
@@ -143,40 +148,33 @@ export const GridCanvas = ({
             Array.from({ length: rows }).map((_, rIdx) =>
               Array.from({ length: cols }).map((__, cIdx) => (
                 <React.Fragment key={`diag-${rIdx}-${cIdx}`}>
-                  <div
-                    className="absolute"
-                    style={{
-                      left: cIdx * cellWidth,
-                      top: rIdx * cellHeight,
-                      width: cellWidth,
-                      height: cellHeight,
-                      borderTop: `${lineThickness}px solid ${lineColor}`,
-                      transformOrigin: "top left",
-                      transform: "rotate(45deg) scaleX(1.414)",
-                      position: "absolute",
-                      pointerEvents: "none",
-                      ...diagonalOpacityStyle,
-                    }}
+                  {/* Top-left to bottom-right diagonal */}
+                  <line
+                    x1={cIdx * cellWidth}
+                    y1={rIdx * cellHeight}
+                    x2={(cIdx + 1) * cellWidth}
+                    y2={(rIdx + 1) * cellHeight}
+                    stroke={lineColor}
+                    strokeWidth={lineThickness}
+                    style={{ opacity: diagonalLineOpacity / 100 }}
                   />
-                  <div
-                    className="absolute"
-                    style={{
-                      left: cIdx * cellWidth,
-                      top: rIdx * cellHeight,
-                      width: cellWidth,
-                      height: cellHeight,
-                      borderTop: `${lineThickness}px solid ${lineColor}`,
-                      transformOrigin: "top right",
-                      transform: "rotate(-45deg) scaleX(1.414)",
-                      position: "absolute",
-                      pointerEvents: "none",
-                      ...diagonalOpacityStyle,
-                    }}
+                  {/* Top-right to bottom-left diagonal */}
+                  <line
+                    x1={(cIdx + 1) * cellWidth}
+                    y1={rIdx * cellHeight}
+                    x2={cIdx * cellWidth}
+                    y2={(rIdx + 1) * cellHeight}
+                    stroke={lineColor}
+                    strokeWidth={lineThickness}
+                    style={{ opacity: diagonalLineOpacity / 100 }}
                   />
                 </React.Fragment>
               ))
             )}
+        </svg>
 
+        {/* Labels */}
+        <div className="absolute inset-0 pointer-events-none">
           {/* Combined A/1 label for the top-left cell */}
           {showRowNumbers && showColNumbers && (
             <div
@@ -197,7 +195,7 @@ export const GridCanvas = ({
 
           {/* Row Numbers (inside first column, excluding the top-left if combined) */}
           {showRowNumbers && (
-            <div className="absolute top-0 left-0 h-full w-full pointer-events-none">
+            <>
               {Array.from({ length: rows }).map((_, i) => {
                 if (i === 0 && showColNumbers) return null;
                 return (
@@ -217,12 +215,12 @@ export const GridCanvas = ({
                   </div>
                 );
               })}
-            </div>
+            </>
           )}
 
           {/* Column Letters (inside first row, excluding the top-left if combined) */}
           {showColNumbers && (
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <>
               {Array.from({ length: cols }).map((_, i) => {
                 if (i === 0 && showRowNumbers) return null;
                 return (
@@ -242,7 +240,7 @@ export const GridCanvas = ({
                   </div>
                 );
               })}
-            </div>
+            </>
           )}
         </div>
       </div>
