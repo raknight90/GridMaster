@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 interface GridCanvasProps {
@@ -15,7 +15,8 @@ interface GridCanvasProps {
   showColNumbers: boolean;
   showDiagonalLines: boolean;
   diagonalLineOpacity: number;
-  imageOffset: { x: number; y: number }; // Changed from gridPosition
+  imageOffset: { x: number; y: number };
+  setImageOffset: (offset: { x: number; y: number }) => void; // New prop
   zoomLevel: number;
   showImage: boolean;
 }
@@ -32,12 +33,16 @@ export const GridCanvas = ({
   showColNumbers,
   showDiagonalLines,
   diagonalLineOpacity,
-  imageOffset, // Use new prop
+  imageOffset,
+  setImageOffset, // Use new prop
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startDragMousePosition, setStartDragMousePosition] = useState({ x: 0, y: 0 });
+  const [startImageOffset, setStartImageOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const img = new Image();
@@ -56,19 +61,53 @@ export const GridCanvas = ({
   const opacityStyle = { opacity: lineOpacity / 100 };
   const diagonalOpacityStyle = { opacity: diagonalLineOpacity / 100 };
 
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartDragMousePosition({ x: e.clientX, y: e.clientY });
+    setStartImageOffset({ x: imageOffset.x, y: imageOffset.y });
+  }, [imageOffset]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - startDragMousePosition.x;
+    const dy = e.clientY - startDragMousePosition.y;
+
+    setImageOffset({
+      x: startImageOffset.x + dx,
+      y: startImageOffset.y + dy,
+    });
+  }, [isDragging, startDragMousePosition, startImageOffset, setImageOffset]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add global mouseup listener to stop dragging even if mouse leaves the canvas
+  useEffect(() => {
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseUp]);
+
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      style={{ cursor: isDragging ? "grabbing" : "grab" }}
     >
       <div
         className="absolute"
         style={{
-          left: imageOffset.x, // Use imageOffset.x
-          top: imageOffset.y, // Use imageOffset.y
+          left: imageOffset.x,
+          top: imageOffset.y,
           width: currentImageWidth,
           height: currentImageHeight,
         }}
+        onMouseDown={handleMouseDown}
       >
         {showImage && (
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />

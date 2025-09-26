@@ -42,7 +42,7 @@ export const GridMasterApp = () => {
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("change", updateDimensions); // Changed to 'change' for consistency
+    return () => window.removeEventListener("resize", updateDimensions); // Changed to 'resize' for consistency
   }, []);
 
   // Effect to load image and set original dimensions
@@ -169,12 +169,12 @@ export const GridMasterApp = () => {
               imageSrc={imageSrc}
               showImage={showImage}
               setShowImage={setShowImage}
-              onFitImage={handleFitImageToCanvas} // New prop
-              onCenterImage={handleCenterImageOnCanvas} // New prop
+              onFitImage={handleFitImageToCanvas}
+              onCenterImage={handleCenterImageOnCanvas}
             />
           </div>
           <div
-            ref={canvasContainerRef} // Attach ref here
+            ref={canvasContainerRef}
             className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted"
           >
             {imageSrc ? (
@@ -190,7 +190,8 @@ export const GridMasterApp = () => {
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
                 diagonalLineOpacity={diagonalLineOpacity}
-                imageOffset={imageOffset} // Pass new offset
+                imageOffset={imageOffset}
+                setImageOffset={setImageOffset} {/* Pass setImageOffset */}
                 zoomLevel={zoomLevel}
                 showImage={showImage}
               />
@@ -213,7 +214,7 @@ export const GridMasterApp = () => {
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
         diagonalLineOpacity={diagonalLineOpacity}
-        imageOffset={imageOffset} // Pass new offset
+        imageOffset={imageOffset}
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}
