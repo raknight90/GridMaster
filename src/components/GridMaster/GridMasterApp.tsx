@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { ImageUpload } from "./ImageUpload";
@@ -18,6 +18,18 @@ export const GridMasterApp = () => {
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
   const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
   const [zoomLevel, setZoomLevel] = useState(100); // New state for zoom level (100% by default)
+
+  const resetGridSettings = useCallback(() => {
+    setRows(10);
+    setCols(10);
+    setLineThickness(2);
+    setLineColor("#ffffff");
+    setShowRowNumbers(false);
+    setShowColNumbers(false);
+    setShowDiagonalLines(false);
+    setGridPosition({ x: 0, y: 0 });
+    setZoomLevel(100);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
@@ -43,8 +55,9 @@ export const GridMasterApp = () => {
               setShowColNumbers={setShowColNumbers}
               showDiagonalLines={showDiagonalLines}
               setShowDiagonalLines={setShowDiagonalLines}
-              zoomLevel={zoomLevel} // Pass zoomLevel
-              setZoomLevel={setZoomLevel} // Pass setZoomLevel
+              zoomLevel={zoomLevel}
+              setZoomLevel={setZoomLevel}
+              onReset={resetGridSettings} // Pass the reset function
             />
           </div>
           <div className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted">
@@ -60,7 +73,7 @@ export const GridMasterApp = () => {
                 showDiagonalLines={showDiagonalLines}
                 gridPosition={gridPosition}
                 setGridPosition={setGridPosition}
-                zoomLevel={zoomLevel} // Pass zoomLevel
+                zoomLevel={zoomLevel}
               />
             ) : (
               <p className="text-muted-foreground">Upload an image to get started!</p>
