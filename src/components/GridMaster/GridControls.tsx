@@ -26,7 +26,10 @@ interface GridControlsProps {
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
-  onExport: () => void; // New prop for export function
+  onExport: () => void;
+  imageSrc: string | null; // Added to disable export button if no image
+  showImage: boolean; // New prop for image visibility
+  setShowImage: (show: boolean) => void; // New prop for setting image visibility
 }
 
 export const GridControls = ({
@@ -47,7 +50,10 @@ export const GridControls = ({
   zoomLevel,
   setZoomLevel,
   onReset,
-  onExport, // Destructure onExport
+  onExport,
+  imageSrc,
+  showImage, // Destructure showImage
+  setShowImage, // Destructure setShowImage
 }: GridControlsProps) => {
   return (
     <Card className="bg-card text-card-foreground">
@@ -132,6 +138,14 @@ export const GridControls = ({
             onCheckedChange={(checked) => setShowDiagonalLines(checked as boolean)}
           />
           <Label htmlFor="show-diagonal-lines">Show Diagonal Lines</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="show-image"
+            checked={showImage}
+            onCheckedChange={(checked) => setShowImage(checked as boolean)}
+          />
+          <Label htmlFor="show-image">Show Image</Label>
         </div>
         <Button onClick={onReset} className="w-full mt-4">
           Reset Settings

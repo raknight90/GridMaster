@@ -14,7 +14,8 @@ interface GridCanvasProps {
   showDiagonalLines: boolean;
   gridPosition: { x: number; y: number };
   setGridPosition: (pos: { x: number; y: number }) => void;
-  zoomLevel: number; // New prop for zoom level
+  zoomLevel: number;
+  showImage: boolean; // New prop for image visibility
 }
 
 export const GridCanvas = ({
@@ -29,6 +30,7 @@ export const GridCanvas = ({
   gridPosition,
   setGridPosition,
   zoomLevel,
+  showImage, // Destructure showImage
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -88,7 +90,9 @@ export const GridCanvas = ({
           height: currentImageHeight,
         }}
       >
-        <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
+        {showImage && ( // Conditionally render the image
+          <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
+        )}
 
         {/* Grid Lines */}
         <div className="absolute inset-0 pointer-events-none">
