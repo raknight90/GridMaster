@@ -20,6 +20,7 @@ export const GridMasterApp = () => {
   const [showRowNumbers, setShowRowNumbers] = useState(false);
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
+  const [diagonalLineOpacity, setDiagonalLineOpacity] = useState(50); // New state for diagonal line opacity
   const [zoomLevel, setZoomLevel] = useState(100);
   const [triggerExport, setTriggerExport] = useState(false);
   const [showImage, setShowImage] = useState(true);
@@ -34,6 +35,7 @@ export const GridMasterApp = () => {
     setShowRowNumbers(false);
     setShowColNumbers(false);
     setShowDiagonalLines(false);
+    setDiagonalLineOpacity(50); // Reset diagonal line opacity
     setZoomLevel(100);
     setShowImage(true);
   }, []);
@@ -82,6 +84,8 @@ export const GridMasterApp = () => {
               setShowColNumbers={setShowColNumbers}
               showDiagonalLines={showDiagonalLines}
               setShowDiagonalLines={setShowDiagonalLines}
+              diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
+              setDiagonalLineOpacity={setDiagonalLineOpacity} // Pass new prop
               zoomLevel={zoomLevel}
               setZoomLevel={setZoomLevel}
               onReset={resetGridSettings}
@@ -104,6 +108,7 @@ export const GridMasterApp = () => {
                 showRowNumbers={showRowNumbers}
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
+                diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
                 gridPosition={fixedGridPosition} // Always pass fixed position
                 zoomLevel={zoomLevel}
                 showImage={showImage}
@@ -126,6 +131,7 @@ export const GridMasterApp = () => {
         showRowNumbers={showRowNumbers}
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
+        diagonalLineOpacity={diagonalLineOpacity} // Pass new prop
         gridPosition={fixedGridPosition} // Always pass fixed position
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}

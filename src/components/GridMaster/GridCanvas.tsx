@@ -14,6 +14,7 @@ interface GridCanvasProps {
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
+  diagonalLineOpacity: number; // New prop
   gridPosition: { x: number; y: number }; // Still passed for consistent rendering logic, but will be fixed at {0,0}
   zoomLevel: number;
   showImage: boolean;
@@ -30,6 +31,7 @@ export const GridCanvas = ({
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
+  diagonalLineOpacity, // Use new prop
   gridPosition, // This will now always be { x: 0, y: 0 }
   zoomLevel,
   showImage,
@@ -52,6 +54,7 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
   const opacityStyle = { opacity: lineOpacity / 100 };
+  const diagonalOpacityStyle = { opacity: diagonalLineOpacity / 100 }; // New style for diagonal lines
 
   return (
     <div
@@ -113,7 +116,7 @@ export const GridCanvas = ({
                       transform: "rotate(45deg) scaleX(1.414)",
                       position: "absolute",
                       pointerEvents: "none",
-                      opacity: 0.5,
+                      ...diagonalOpacityStyle, // Apply new diagonal opacity
                     }}
                   />
                   <div
@@ -128,7 +131,7 @@ export const GridCanvas = ({
                       transform: "rotate(-45deg) scaleX(1.414)",
                       position: "absolute",
                       pointerEvents: "none",
-                      opacity: 0.5,
+                      ...diagonalOpacityStyle, // Apply new diagonal opacity
                     }}
                   />
                 </React.Fragment>

@@ -27,6 +27,8 @@ interface GridControlsProps {
   setShowColNumbers: (show: boolean) => void;
   showDiagonalLines: boolean;
   setShowDiagonalLines: (show: boolean) => void;
+  diagonalLineOpacity: number; // New prop
+  setDiagonalLineOpacity: (opacity: number) => void; // New prop
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
@@ -55,6 +57,8 @@ export const GridControls = ({
   setShowColNumbers,
   showDiagonalLines,
   setShowDiagonalLines,
+  diagonalLineOpacity, // New prop
+  setDiagonalLineOpacity, // New prop
   zoomLevel,
   setZoomLevel,
   onReset,
@@ -123,6 +127,19 @@ export const GridControls = ({
             onValueChange={(val) => setLineOpacity(val[0])}
           />
         </div>
+        {showDiagonalLines && ( // Only show if diagonal lines are enabled
+          <div className="space-y-2">
+            <Label htmlFor="diagonal-line-opacity-slider">Diagonal Line Opacity: {diagonalLineOpacity}%</Label>
+            <Slider
+              id="diagonal-line-opacity-slider"
+              min={0}
+              max={100}
+              step={1}
+              value={[diagonalLineOpacity]}
+              onValueChange={(val) => setDiagonalLineOpacity(val[0])}
+            />
+          </div>
+        )}
         <div className="space-y-2">
           <Label htmlFor="label-color">Label Color</Label>
           <Input

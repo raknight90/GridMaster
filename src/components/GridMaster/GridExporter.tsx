@@ -13,6 +13,7 @@ interface GridExporterProps {
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
+  diagonalLineOpacity: number; // New prop
   gridPosition: { x: number; y: number };
   zoomLevel: number;
   triggerExport: boolean;
@@ -30,6 +31,7 @@ export const GridExporter = ({
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
+  diagonalLineOpacity, // Use new prop
   gridPosition,
   zoomLevel,
   triggerExport,
@@ -96,7 +98,7 @@ export const GridExporter = ({
         ctx.save();
         ctx.strokeStyle = lineColor;
         ctx.lineWidth = lineThickness;
-        ctx.globalAlpha = (lineOpacity / 100) * 0.5; // Apply opacity and match GridCanvas's 0.5 multiplier
+        ctx.globalAlpha = diagonalLineOpacity / 100; // Use the new diagonalLineOpacity
 
         for (let rIdx = 0; rIdx < rows; rIdx++) {
           for (let cIdx = 0; cIdx < cols; cIdx++) {
@@ -189,6 +191,7 @@ export const GridExporter = ({
     showRowNumbers,
     showColNumbers,
     showDiagonalLines,
+    diagonalLineOpacity, // Include in dependency array
     gridPosition,
     zoomLevel,
     onExportComplete,
