@@ -40,7 +40,7 @@ export const GridCanvas = ({
 }: GridCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
-  const [isDragging, setIsDragging] = useState(false); // State to manage cursor style
+  const [isDragging, setIsDragging] = useState(false);
 
   // Use refs to store mutable values that don't trigger re-renders
   const startDragMousePositionRef = useRef({ x: 0, y: 0 });
@@ -76,25 +76,34 @@ export const GridCanvas = ({
       x: startImageOffsetRef.current.x + dx,
       y: startImageOffsetRef.current.y + dy,
     });
-  }, [setImageOffset]); // setImageOffset is a stable function from React
+  }, [setImageOffset]);
 
   // Define mouse up handler as a stable callback
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false); // Stop dragging visually
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove]); // handleMouseMove is a stable ref here
+    setIsDragging(false);
+    // Listeners will be removed by the useEffect cleanup function
+  }, []);
 
-  // Define mouse down handler as a stable callback
+  // Effect to manage global event listeners for dragging
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+
+    // Cleanup function: remove listeners when dragging stops or component unmounts
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]); // Dependencies for this effect
+
+  // Mouse down handler to initiate dragging
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsDragging(true); // Start dragging visually
+    setIsDragging(true);
     startDragMousePositionRef.current = { x: e.clientX, y: e.clientY };
     startImageOffsetRef.current = imageOffsetRef.current; // Use the latest imageOffset from ref
-
-    // Attach global listeners when dragging starts
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]); // handleMouseMove and handleMouseUp are stable refs here
+  }, []);
 
   return (
     <div
@@ -110,7 +119,7 @@ export const GridCanvas = ({
           width: currentImageWidth,
           height: currentImageHeight,
         }}
-        onMouseDown={handleMouseDown} // Only onMouseDown on this element
+        onMouseDown={handleMouseDown}
       >
         {showImage && (
           <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
