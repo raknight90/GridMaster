@@ -14,7 +14,7 @@ interface GridExporterProps {
   showColNumbers: boolean;
   showDiagonalLines: boolean;
   diagonalLineOpacity: number;
-  imageOffset: { x: number; y: number }; // Changed from gridPosition
+  // Removed imageOffset: { x: number; y: number };
   zoomLevel: number;
   triggerExport: boolean;
   onExportComplete: () => void;
@@ -32,7 +32,7 @@ export const GridExporter = ({
   showColNumbers,
   showDiagonalLines,
   diagonalLineOpacity,
-  imageOffset, // Use new prop
+  // Removed imageOffset,
   zoomLevel,
   triggerExport,
   onExportComplete,
@@ -62,8 +62,8 @@ export const GridExporter = ({
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw the image
-      ctx.drawImage(img, imageOffset.x, imageOffset.y, scaledImageWidth, scaledImageHeight); // Use imageOffset
+      // Draw the image at (0,0) on the export canvas
+      ctx.drawImage(img, 0, 0, scaledImageWidth, scaledImageHeight);
 
       // Apply line opacity
       ctx.globalAlpha = lineOpacity / 100;
@@ -77,19 +77,19 @@ export const GridExporter = ({
 
       // Vertical lines
       for (let i = 0; i <= cols; i++) {
-        const x = imageOffset.x + i * cellWidth; // Use imageOffset
+        const x = i * cellWidth; // Draw relative to (0,0)
         ctx.beginPath();
-        ctx.moveTo(x, imageOffset.y); // Use imageOffset
-        ctx.lineTo(x, imageOffset.y + scaledImageHeight); // Use imageOffset
+        ctx.moveTo(x, 0); // Draw relative to (0,0)
+        ctx.lineTo(x, scaledImageHeight); // Draw relative to (0,0)
         ctx.stroke();
       }
 
       // Horizontal lines
       for (let i = 0; i <= rows; i++) {
-        const y = imageOffset.y + i * cellHeight; // Use imageOffset
+        const y = i * cellHeight; // Draw relative to (0,0)
         ctx.beginPath();
-        ctx.moveTo(imageOffset.x, y); // Use imageOffset
-        ctx.lineTo(imageOffset.x + scaledImageWidth, y); // Use imageOffset
+        ctx.moveTo(0, y); // Draw relative to (0,0)
+        ctx.lineTo(scaledImageWidth, y); // Draw relative to (0,0)
         ctx.stroke();
       }
 
@@ -102,8 +102,8 @@ export const GridExporter = ({
 
         for (let rIdx = 0; rIdx < rows; rIdx++) {
           for (let cIdx = 0; cIdx < cols; cIdx++) {
-            const startX = imageOffset.x + cIdx * cellWidth; // Use imageOffset
-            const startY = imageOffset.y + rIdx * cellHeight; // Use imageOffset
+            const startX = cIdx * cellWidth; // Draw relative to (0,0)
+            const startY = rIdx * cellHeight; // Draw relative to (0,0)
 
             // Top-left to bottom-right diagonal
             ctx.beginPath();
@@ -131,8 +131,8 @@ export const GridExporter = ({
         ctx.save();
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        const x = imageOffset.x + padding; // Use imageOffset
-        const y = imageOffset.y + padding; // Use imageOffset
+        const x = padding; // Draw relative to (0,0)
+        const y = padding; // Draw relative to (0,0)
         ctx.fillText("A/1", x, y);
         ctx.restore();
       }
@@ -144,8 +144,8 @@ export const GridExporter = ({
         ctx.textBaseline = "middle";
         for (let i = 0; i < rows; i++) {
           if (i === 0 && showColNumbers) continue;
-          const y = imageOffset.y + (i * cellHeight) + (cellHeight / 2); // Use imageOffset
-          const x = imageOffset.x + padding; // Use imageOffset
+          const y = (i * cellHeight) + (cellHeight / 2); // Draw relative to (0,0)
+          const x = padding; // Draw relative to (0,0)
           ctx.fillText((i + 1).toString(), x, y);
         }
         ctx.restore();
@@ -158,8 +158,8 @@ export const GridExporter = ({
         ctx.textBaseline = "top";
         for (let i = 0; i < cols; i++) {
           if (i === 0 && showRowNumbers) continue;
-          const x = imageOffset.x + (i * cellWidth) + (cellWidth / 2); // Use imageOffset
-          const y = imageOffset.y + padding; // Use imageOffset
+          const x = (i * cellWidth) + (cellWidth / 2); // Draw relative to (0,0)
+          const y = padding; // Draw relative to (0,0)
           ctx.fillText(String.fromCharCode(65 + i), x, y);
         }
         ctx.restore();
@@ -191,7 +191,6 @@ export const GridExporter = ({
     showColNumbers,
     showDiagonalLines,
     diagonalLineOpacity,
-    imageOffset, // Include in dependency array
     zoomLevel,
     onExportComplete,
   ]);

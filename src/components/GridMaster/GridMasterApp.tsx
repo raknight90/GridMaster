@@ -232,7 +232,7 @@ export const GridMasterApp = () => {
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
         diagonalLineOpacity={diagonalLineOpacity}
-        imageOffset={{ x: imageOffsetX, y: imageOffsetY }} // Pass combined offset
+        // Removed imageOffset={{ x: imageOffsetX, y: imageOffsetY }}
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}
