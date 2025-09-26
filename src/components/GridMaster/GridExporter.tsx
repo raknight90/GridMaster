@@ -121,35 +121,46 @@ export const GridExporter = ({
 
       ctx.fillStyle = labelColor; // Use labelColor for numbers
       ctx.font = "14px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
       ctx.globalAlpha = lineOpacity / 100; // Apply opacity to text
+      const padding = 5; // Small padding from the edge
 
       // Handle the A/1 combined label
       if (showRowNumbers && showColNumbers) {
-        const x = gridPosition.x + (cellWidth / 2);
-        const y = gridPosition.y + (cellHeight / 2);
+        ctx.save();
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        const x = gridPosition.x + padding;
+        const y = gridPosition.y + padding;
         ctx.fillText("A/1", x, y);
+        ctx.restore();
       }
 
       // Row Numbers (inside first column, excluding the top-left if combined)
       if (showRowNumbers) {
+        ctx.save();
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
         for (let i = 0; i < rows; i++) {
           if (i === 0 && showColNumbers) continue; // Skip if A/1 is handled
           const y = gridPosition.y + (i * cellHeight) + (cellHeight / 2);
-          const x = gridPosition.x + (cellWidth / 2);
+          const x = gridPosition.x + padding;
           ctx.fillText((i + 1).toString(), x, y);
         }
+        ctx.restore();
       }
 
       // Column Letters (inside first row, excluding the top-left if combined)
       if (showColNumbers) {
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
         for (let i = 0; i < cols; i++) {
           if (i === 0 && showRowNumbers) continue; // Skip if A/1 is handled
           const x = gridPosition.x + (i * cellWidth) + (cellWidth / 2);
-          const y = gridPosition.y + (cellHeight / 2);
+          const y = gridPosition.y + padding;
           ctx.fillText(String.fromCharCode(65 + i), x, y);
         }
+        ctx.restore();
       }
 
       // Reset globalAlpha for the rest of the canvas operations if any

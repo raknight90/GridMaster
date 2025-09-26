@@ -56,7 +56,7 @@ export const GridCanvas = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden" // Removed cursor styles
+      className="relative w-full h-full overflow-hidden"
     >
       <div
         className="absolute"
@@ -139,7 +139,7 @@ export const GridCanvas = ({
           {showRowNumbers && showColNumbers && (
             <div
               key="combined-label-0-0"
-              className="absolute text-sm font-semibold flex items-center justify-center"
+              className="absolute text-sm font-semibold flex items-start justify-start p-1" // Adjusted alignment and padding
               style={{
                 top: 0,
                 left: 0,
@@ -161,7 +161,7 @@ export const GridCanvas = ({
                 return (
                   <div
                     key={`row-num-${i}`}
-                    className="absolute text-sm font-semibold flex items-center justify-center"
+                    className="absolute text-sm font-semibold flex items-center justify-start pl-1" // Adjusted alignment and padding
                     style={{
                       top: `${i * cellHeight}px`,
                       left: 0,
@@ -186,7 +186,7 @@ export const GridCanvas = ({
                 return (
                   <div
                     key={`col-num-${i}`}
-                    className="absolute text-sm font-semibold flex items-center justify-center"
+                    className="absolute text-sm font-semibold flex items-start justify-center pt-1" // Adjusted alignment and padding
                     style={{
                       top: 0,
                       left: `${i * cellWidth}px`,
