@@ -45,12 +45,6 @@ export const GridCanvas = ({
   // Use refs to store mutable values that don't trigger re-renders
   const startDragMousePositionRef = useRef({ x: 0, y: 0 });
   const startImageOffsetRef = useRef({ x: 0, y: 0 });
-  const imageOffsetRef = useRef(imageOffset); // Keep a ref to the latest imageOffset
-
-  // Update imageOffsetRef whenever imageOffset state changes
-  useEffect(() => {
-    imageOffsetRef.current = imageOffset;
-  }, [imageOffset]);
 
   useEffect(() => {
     const img = new Image();
@@ -67,46 +61,42 @@ export const GridCanvas = ({
   const cellWidth = currentImageWidth / cols;
   const cellHeight = currentImageHeight / rows;
 
-  // Store event handler functions in refs to ensure stable references
-  const handleMouseMoveRef = useRef((e: MouseEvent) => {
-    // This function will be updated by useEffect below
-  });
+  // Define mouse move handler as a stable callback
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const dx = e.clientX - startDragMousePositionRef.current.x;
+    const dy = e.clientY - startDragMousePositionRef.current.y;
 
-  const handleMouseUpRef = useRef(() => {
-    // This function will be updated by useEffect below
-  });
+    setImageOffset({
+      x: startImageOffsetRef.current.x + dx,
+      y: startImageOffsetRef.current.y + dy,
+    });
+  }, [setImageOffset]); // setImageOffset is a stable function from React
 
-  // Update handleMouseMoveRef.current whenever setImageOffset changes
+  // Define mouse up handler as a stable callback
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Effect to manage global event listeners for dragging
   useEffect(() => {
-    handleMouseMoveRef.current = (e: MouseEvent) => {
-      const dx = e.clientX - startDragMousePositionRef.current.x;
-      const dy = e.clientY - startDragMousePositionRef.current.y;
-      setImageOffset({
-        x: startImageOffsetRef.current.x + dx,
-        y: startImageOffsetRef.current.y + dy,
-      });
-    };
-  }, [setImageOffset]);
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
 
-  // Update handleMouseUpRef.current whenever setIsDragging changes
-  useEffect(() => {
-    handleMouseUpRef.current = () => {
-      setIsDragging(false);
-      window.removeEventListener("mousemove", handleMouseMoveRef.current);
-      window.removeEventListener("mouseup", handleMouseUpRef.current);
+    // Cleanup function: remove listeners when dragging stops or component unmounts
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [setIsDragging]);
+  }, [isDragging, handleMouseMove, handleMouseUp]); // Dependencies for this effect
 
   // Mouse down handler to initiate dragging
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
     startDragMousePositionRef.current = { x: e.clientX, y: e.clientY };
-    startImageOffsetRef.current = imageOffsetRef.current; // Use the latest imageOffset from ref
-
-    // Attach global listeners using the stable ref functions
-    window.addEventListener("mousemove", handleMouseMoveRef.current);
-    window.addEventListener("mouseup", handleMouseUpRef.current);
-  }, []); // No dependencies needed here as it uses stable refs for handlers
+    startImageOffsetRef.current = imageOffset; // Capture current imageOffset at start of drag
+  }, [imageOffset]); // imageOffset is a dependency here to capture its current value
 
   return (
     <div
