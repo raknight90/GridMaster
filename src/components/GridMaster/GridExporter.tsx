@@ -125,18 +125,27 @@ export const GridExporter = ({
       ctx.textBaseline = "middle";
       ctx.globalAlpha = lineOpacity / 100; // Apply opacity to text
 
-      // Row Numbers (inside first column)
+      // Handle the A/1 combined label
+      if (showRowNumbers && showColNumbers) {
+        const x = gridPosition.x + (cellWidth / 2);
+        const y = gridPosition.y + (cellHeight / 2);
+        ctx.fillText("A/1", x, y);
+      }
+
+      // Row Numbers (inside first column, excluding the top-left if combined)
       if (showRowNumbers) {
         for (let i = 0; i < rows; i++) {
+          if (i === 0 && showColNumbers) continue; // Skip if A/1 is handled
           const y = gridPosition.y + (i * cellHeight) + (cellHeight / 2);
           const x = gridPosition.x + (cellWidth / 2);
           ctx.fillText((i + 1).toString(), x, y);
         }
       }
 
-      // Column Numbers (now letters, inside first row)
+      // Column Letters (inside first row, excluding the top-left if combined)
       if (showColNumbers) {
         for (let i = 0; i < cols; i++) {
+          if (i === 0 && showRowNumbers) continue; // Skip if A/1 is handled
           const x = gridPosition.x + (i * cellWidth) + (cellWidth / 2);
           const y = gridPosition.y + (cellHeight / 2);
           ctx.fillText(String.fromCharCode(65 + i), x, y);

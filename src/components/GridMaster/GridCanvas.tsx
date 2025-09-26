@@ -65,7 +65,7 @@ export const GridCanvas = ({
     if (!isDragging) return;
     setGridPosition({
       x: e.clientX - dragStartOffset.x,
-      y: e.clientY - dragStartOffset.y, // Corrected from gridStartOffset.y
+      y: e.clientY - dragStartOffset.y,
     });
   };
 
@@ -163,47 +163,71 @@ export const GridCanvas = ({
               ))
             )}
 
-          {/* Row Numbers (inside first column) */}
-          {showRowNumbers && (
-            <div className="absolute top-0 left-0 h-full w-full pointer-events-none">
-              {Array.from({ length: rows }).map((_, i) => (
-                <div
-                  key={`row-num-${i}`}
-                  className="absolute text-sm font-semibold flex items-center justify-center"
-                  style={{
-                    top: `${i * cellHeight}px`,
-                    left: 0,
-                    width: cellWidth,
-                    height: cellHeight,
-                    opacity: lineOpacity / 100,
-                    color: labelColor,
-                  }}
-                >
-                  {i + 1}
-                </div>
-              ))}
+          {/* Combined A/1 label for the top-left cell */}
+          {showRowNumbers && showColNumbers && (
+            <div
+              key="combined-label-0-0"
+              className="absolute text-sm font-semibold flex items-center justify-center"
+              style={{
+                top: 0,
+                left: 0,
+                width: cellWidth,
+                height: cellHeight,
+                opacity: lineOpacity / 100,
+                color: labelColor,
+              }}
+            >
+              A/1
             </div>
           )}
 
-          {/* Column Letters (inside first row) */}
+          {/* Row Numbers (inside first column, excluding the top-left if combined) */}
+          {showRowNumbers && (
+            <div className="absolute top-0 left-0 h-full w-full pointer-events-none">
+              {Array.from({ length: rows }).map((_, i) => {
+                if (i === 0 && showColNumbers) return null; // Skip if A/1 is handled
+                return (
+                  <div
+                    key={`row-num-${i}`}
+                    className="absolute text-sm font-semibold flex items-center justify-center"
+                    style={{
+                      top: `${i * cellHeight}px`,
+                      left: 0,
+                      width: cellWidth,
+                      height: cellHeight,
+                      opacity: lineOpacity / 100,
+                      color: labelColor,
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Column Letters (inside first row, excluding the top-left if combined) */}
           {showColNumbers && (
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-              {Array.from({ length: cols }).map((_, i) => (
-                <div
-                  key={`col-num-${i}`}
-                  className="absolute text-sm font-semibold flex items-center justify-center"
-                  style={{
-                    top: 0,
-                    left: `${i * cellWidth}px`,
-                    width: cellWidth,
-                    height: cellHeight,
-                    opacity: lineOpacity / 100,
-                    color: labelColor,
-                  }}
-                >
-                  {String.fromCharCode(65 + i)} {/* Convert number to letter */}
-                </div>
-              ))}
+              {Array.from({ length: cols }).map((_, i) => {
+                if (i === 0 && showRowNumbers) return null; // Skip if A/1 is handled
+                return (
+                  <div
+                    key={`col-num-${i}`}
+                    className="absolute text-sm font-semibold flex items-center justify-center"
+                    style={{
+                      top: 0,
+                      left: `${i * cellWidth}px`,
+                      width: cellWidth,
+                      height: cellHeight,
+                      opacity: lineOpacity / 100,
+                      color: labelColor,
+                    }}
+                  >
+                    {String.fromCharCode(65 + i)} {/* Convert number to letter */}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
