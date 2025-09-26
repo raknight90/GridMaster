@@ -14,7 +14,8 @@ export const GridMasterApp = () => {
   const [cols, setCols] = useState(10);
   const [lineThickness, setLineThickness] = useState(2);
   const [lineColor, setLineColor] = useState("#ffffff"); // Default white for dark theme
-  const [lineOpacity, setLineOpacity] = useState(100); // New state for line opacity (0-100)
+  const [lineOpacity, setLineOpacity] = useState(100);
+  const [labelColor, setLabelColor] = useState("#ffffff"); // New state for label color
   const [showRowNumbers, setShowRowNumbers] = useState(false);
   const [showColNumbers, setShowColNumbers] = useState(false);
   const [showDiagonalLines, setShowDiagonalLines] = useState(false);
@@ -28,13 +29,18 @@ export const GridMasterApp = () => {
     setCols(10);
     setLineThickness(2);
     setLineColor("#ffffff");
-    setLineOpacity(100); // Reset line opacity
+    setLineOpacity(100);
+    setLabelColor("#ffffff"); // Reset label color
     setShowRowNumbers(false);
     setShowColNumbers(false);
     setShowDiagonalLines(false);
     setGridPosition({ x: 0, y: 0 });
     setZoomLevel(100);
     setShowImage(true);
+  }, []);
+
+  const resetGridPosition = useCallback(() => {
+    setGridPosition({ x: 0, y: 0 });
   }, []);
 
   const handleExport = () => {
@@ -65,8 +71,10 @@ export const GridMasterApp = () => {
               setLineThickness={setLineThickness}
               lineColor={lineColor}
               setLineColor={setLineColor}
-              lineOpacity={lineOpacity} // Pass lineOpacity
-              setLineOpacity={setLineOpacity} // Pass setLineOpacity
+              lineOpacity={lineOpacity}
+              setLineOpacity={setLineOpacity}
+              labelColor={labelColor} // Pass labelColor
+              setLabelColor={setLabelColor} // Pass setLabelColor
               showRowNumbers={showRowNumbers}
               setShowRowNumbers={setShowRowNumbers}
               showColNumbers={showColNumbers}
@@ -76,6 +84,7 @@ export const GridMasterApp = () => {
               zoomLevel={zoomLevel}
               setZoomLevel={setZoomLevel}
               onReset={resetGridSettings}
+              onResetGridPosition={resetGridPosition} // Pass resetGridPosition
               onExport={handleExport}
               imageSrc={imageSrc}
               showImage={showImage}
@@ -90,7 +99,8 @@ export const GridMasterApp = () => {
                 cols={cols}
                 lineThickness={lineThickness}
                 lineColor={lineColor}
-                lineOpacity={lineOpacity} // Pass lineOpacity
+                lineOpacity={lineOpacity}
+                labelColor={labelColor} // Pass labelColor
                 showRowNumbers={showRowNumbers}
                 showColNumbers={showColNumbers}
                 showDiagonalLines={showDiagonalLines}
@@ -112,7 +122,8 @@ export const GridMasterApp = () => {
         cols={cols}
         lineThickness={lineThickness}
         lineColor={lineColor}
-        lineOpacity={lineOpacity} // Pass lineOpacity
+        lineOpacity={lineOpacity}
+        labelColor={labelColor} // Pass labelColor
         showRowNumbers={showRowNumbers}
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}

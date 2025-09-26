@@ -17,8 +17,10 @@ interface GridControlsProps {
   setLineThickness: (thickness: number) => void;
   lineColor: string;
   setLineColor: (color: string) => void;
-  lineOpacity: number; // New prop for line opacity
-  setLineOpacity: (opacity: number) => void; // New prop for setting line opacity
+  lineOpacity: number;
+  setLineOpacity: (opacity: number) => void;
+  labelColor: string; // New prop for label color
+  setLabelColor: (color: string) => void; // New prop for setting label color
   showRowNumbers: boolean;
   setShowRowNumbers: (show: boolean) => void;
   showColNumbers: boolean;
@@ -28,6 +30,7 @@ interface GridControlsProps {
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
   onReset: () => void;
+  onResetGridPosition: () => void; // New prop for resetting grid position
   onExport: () => void;
   imageSrc: string | null;
   showImage: boolean;
@@ -43,8 +46,10 @@ export const GridControls = ({
   setLineThickness,
   lineColor,
   setLineColor,
-  lineOpacity, // Destructure lineOpacity
-  setLineOpacity, // Destructure setLineOpacity
+  lineOpacity,
+  setLineOpacity,
+  labelColor, // Destructure labelColor
+  setLabelColor, // Destructure setLabelColor
   showRowNumbers,
   setShowRowNumbers,
   showColNumbers,
@@ -54,6 +59,7 @@ export const GridControls = ({
   zoomLevel,
   setZoomLevel,
   onReset,
+  onResetGridPosition, // Destructure onResetGridPosition
   onExport,
   imageSrc,
   showImage,
@@ -120,6 +126,16 @@ export const GridControls = ({
           />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="label-color">Label Color</Label>
+          <Input
+            id="label-color"
+            type="color"
+            value={labelColor}
+            onChange={(e) => setLabelColor(e.target.value)}
+            className="h-10 w-full"
+          />
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="zoom-slider">Zoom: {zoomLevel}%</Label>
           <Slider
             id="zoom-slider"
@@ -162,8 +178,11 @@ export const GridControls = ({
           />
           <Label htmlFor="show-image">Show Image</Label>
         </div>
-        <Button onClick={onReset} className="w-full mt-4">
-          Reset Settings
+        <Button onClick={onResetGridPosition} className="w-full mt-4">
+          Reset Grid Position
+        </Button>
+        <Button onClick={onReset} className="w-full mt-2">
+          Reset All Settings
         </Button>
         <Button onClick={onExport} className="w-full mt-2" disabled={!imageSrc}>
           Export Image

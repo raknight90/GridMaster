@@ -9,7 +9,8 @@ interface GridCanvasProps {
   cols: number;
   lineThickness: number;
   lineColor: string;
-  lineOpacity: number; // New prop for line opacity
+  lineOpacity: number;
+  labelColor: string; // New prop for label color
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
@@ -25,7 +26,8 @@ export const GridCanvas = ({
   cols,
   lineThickness,
   lineColor,
-  lineOpacity, // Destructure lineOpacity
+  lineOpacity,
+  labelColor, // Destructure labelColor
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
@@ -167,13 +169,14 @@ export const GridCanvas = ({
               {Array.from({ length: rows }).map((_, i) => (
                 <div
                   key={`row-num-${i}`}
-                  className="absolute text-sm font-semibold text-foreground/80"
+                  className="absolute text-sm font-semibold"
                   style={{
                     top: `${(i + 0.5) * cellHeight}px`,
                     transform: "translateY(-50%)",
                     height: cellHeight,
                     lineHeight: `${cellHeight}px`,
-                    opacity: lineOpacity / 100, // Apply opacity
+                    opacity: lineOpacity / 100,
+                    color: labelColor, // Apply labelColor
                   }}
                 >
                   {i + 1}
@@ -188,12 +191,13 @@ export const GridCanvas = ({
               {Array.from({ length: cols }).map((_, i) => (
                 <div
                   key={`col-num-${i}`}
-                  className="absolute text-sm font-semibold text-foreground/80"
+                  className="absolute text-sm font-semibold"
                   style={{
                     left: `${(i + 0.5) * cellWidth}px`,
                     transform: "translateX(-50%)",
                     width: cellWidth,
-                    opacity: lineOpacity / 100, // Apply opacity
+                    opacity: lineOpacity / 100,
+                    color: labelColor, // Apply labelColor
                   }}
                 >
                   {String.fromCharCode(65 + i)} {/* Convert number to letter */}

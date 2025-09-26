@@ -8,7 +8,8 @@ interface GridExporterProps {
   cols: number;
   lineThickness: number;
   lineColor: string;
-  lineOpacity: number; // New prop for line opacity
+  lineOpacity: number;
+  labelColor: string; // New prop for label color
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
@@ -24,7 +25,8 @@ export const GridExporter = ({
   cols,
   lineThickness,
   lineColor,
-  lineOpacity, // Destructure lineOpacity
+  lineOpacity,
+  labelColor, // Destructure labelColor
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
@@ -117,7 +119,7 @@ export const GridExporter = ({
         ctx.restore();
       }
 
-      ctx.fillStyle = lineColor; // Use line color for numbers for consistency
+      ctx.fillStyle = labelColor; // Use labelColor for numbers
       ctx.font = "14px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -160,7 +162,8 @@ export const GridExporter = ({
     cols,
     lineThickness,
     lineColor,
-    lineOpacity, // Add lineOpacity to dependencies
+    lineOpacity,
+    labelColor, // Add labelColor to dependencies
     showRowNumbers,
     showColNumbers,
     showDiagonalLines,
