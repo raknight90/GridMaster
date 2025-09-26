@@ -10,7 +10,7 @@ interface GridCanvasProps {
   lineThickness: number;
   lineColor: string;
   lineOpacity: number;
-  labelColor: string; // New prop for label color
+  labelColor: string;
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
@@ -27,7 +27,7 @@ export const GridCanvas = ({
   lineThickness,
   lineColor,
   lineOpacity,
-  labelColor, // Destructure labelColor
+  labelColor,
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
@@ -65,7 +65,7 @@ export const GridCanvas = ({
     if (!isDragging) return;
     setGridPosition({
       x: e.clientX - dragStartOffset.x,
-      y: e.clientY - dragStartOffset.y,
+      y: e.clientY - gridStartOffset.y,
     });
   };
 
@@ -163,20 +163,20 @@ export const GridCanvas = ({
               ))
             )}
 
-          {/* Row Numbers */}
+          {/* Row Numbers (inside first column) */}
           {showRowNumbers && (
-            <div className="absolute top-0 left-0 h-full w-10 -translate-x-full text-right pr-2 pointer-events-none">
+            <div className="absolute top-0 left-0 h-full w-full pointer-events-none">
               {Array.from({ length: rows }).map((_, i) => (
                 <div
                   key={`row-num-${i}`}
-                  className="absolute text-sm font-semibold"
+                  className="absolute text-sm font-semibold flex items-center justify-center"
                   style={{
-                    top: `${(i + 0.5) * cellHeight}px`,
-                    transform: "translateY(-50%)",
+                    top: `${i * cellHeight}px`,
+                    left: 0,
+                    width: cellWidth,
                     height: cellHeight,
-                    lineHeight: `${cellHeight}px`,
                     opacity: lineOpacity / 100,
-                    color: labelColor, // Apply labelColor
+                    color: labelColor,
                   }}
                 >
                   {i + 1}
@@ -185,19 +185,20 @@ export const GridCanvas = ({
             </div>
           )}
 
-          {/* Column Letters */}
+          {/* Column Letters (inside first row) */}
           {showColNumbers && (
-            <div className="absolute top-0 left-0 w-full h-10 -translate-y-full pt-2 text-center pointer-events-none">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
               {Array.from({ length: cols }).map((_, i) => (
                 <div
                   key={`col-num-${i}`}
-                  className="absolute text-sm font-semibold"
+                  className="absolute text-sm font-semibold flex items-center justify-center"
                   style={{
-                    left: `${(i + 0.5) * cellWidth}px`,
-                    transform: "translateX(-50%)",
+                    top: 0,
+                    left: `${i * cellWidth}px`,
                     width: cellWidth,
+                    height: cellHeight,
                     opacity: lineOpacity / 100,
-                    color: labelColor, // Apply labelColor
+                    color: labelColor,
                   }}
                 >
                   {String.fromCharCode(65 + i)} {/* Convert number to letter */}

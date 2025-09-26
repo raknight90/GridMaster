@@ -9,7 +9,7 @@ interface GridExporterProps {
   lineThickness: number;
   lineColor: string;
   lineOpacity: number;
-  labelColor: string; // New prop for label color
+  labelColor: string;
   showRowNumbers: boolean;
   showColNumbers: boolean;
   showDiagonalLines: boolean;
@@ -26,7 +26,7 @@ export const GridExporter = ({
   lineThickness,
   lineColor,
   lineOpacity,
-  labelColor, // Destructure labelColor
+  labelColor,
   showRowNumbers,
   showColNumbers,
   showDiagonalLines,
@@ -125,19 +125,21 @@ export const GridExporter = ({
       ctx.textBaseline = "middle";
       ctx.globalAlpha = lineOpacity / 100; // Apply opacity to text
 
-      // Row Numbers
+      // Row Numbers (inside first column)
       if (showRowNumbers) {
         for (let i = 0; i < rows; i++) {
-          const y = gridPosition.y + (i + 0.5) * cellHeight;
-          ctx.fillText((i + 1).toString(), gridPosition.x - 20, y); // Offset to the left
+          const y = gridPosition.y + (i * cellHeight) + (cellHeight / 2);
+          const x = gridPosition.x + (cellWidth / 2);
+          ctx.fillText((i + 1).toString(), x, y);
         }
       }
 
-      // Column Numbers (now letters)
+      // Column Numbers (now letters, inside first row)
       if (showColNumbers) {
         for (let i = 0; i < cols; i++) {
-          const x = gridPosition.x + (i + 0.5) * cellWidth;
-          ctx.fillText(String.fromCharCode(65 + i), x, gridPosition.y - 20); // Offset to the top, use letters
+          const x = gridPosition.x + (i * cellWidth) + (cellWidth / 2);
+          const y = gridPosition.y + (cellHeight / 2);
+          ctx.fillText(String.fromCharCode(65 + i), x, y);
         }
       }
 
@@ -163,7 +165,7 @@ export const GridExporter = ({
     lineThickness,
     lineColor,
     lineOpacity,
-    labelColor, // Add labelColor to dependencies
+    labelColor,
     showRowNumbers,
     showColNumbers,
     showDiagonalLines,
