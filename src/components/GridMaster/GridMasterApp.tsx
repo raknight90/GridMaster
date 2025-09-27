@@ -194,7 +194,7 @@ export const GridMasterApp = () => {
           </div>
           <div
             ref={canvasContainerRef}
-            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-hidden flex items-center justify-center bg-muted"
+            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-auto flex items-center justify-center bg-muted"
           >
             {imageSrc ? (
               <GridCanvas
@@ -232,7 +232,6 @@ export const GridMasterApp = () => {
         showColNumbers={showColNumbers}
         showDiagonalLines={showDiagonalLines}
         diagonalLineOpacity={diagonalLineOpacity}
-        // Removed imageOffset={{ x: imageOffsetX, y: imageOffsetY }}
         zoomLevel={zoomLevel}
         triggerExport={triggerExport}
         onExportComplete={handleExportComplete}
