@@ -102,7 +102,6 @@ export const GridMasterApp = () => {
       newZoomLevel = (scaledHeight / originalImageDimensions.height) * 100;
     }
 
-    setZoomLevel(newZoomLevel);
     setImageOffsetX((canvasContainerDimensions.width - scaledWidth) / 2);
     setImageOffsetY((canvasContainerDimensions.height - scaledHeight) / 2);
   }, [imageSrc, originalImageDimensions, canvasContainerDimensions]);
@@ -194,7 +193,7 @@ export const GridMasterApp = () => {
           </div>
           <div
             ref={canvasContainerRef}
-            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-auto flex items-center justify-center bg-muted"
+            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-auto bg-muted"
           >
             {imageSrc ? (
               <GridCanvas
@@ -214,7 +213,7 @@ export const GridMasterApp = () => {
                 showImage={showImage}
               />
             ) : (
-              <p className="text-muted-foreground">Upload an image to get started!</p>
+              <p className="text-muted-foreground absolute inset-0 flex items-center justify-center">Upload an image to get started!</p>
             )}
           </div>
         </CardContent>
