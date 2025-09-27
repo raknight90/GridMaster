@@ -55,7 +55,7 @@ export const GridCanvas = ({
 
   return (
     <div
-      className="relative" // Keep relative for absolute children
+      className="absolute" // Changed from relative to absolute
       style={{
         left: imageOffset.x,
         top: imageOffset.y,
