@@ -105,7 +105,7 @@ export const GridControlsDropdown = ({
           Controls
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 p-4" align="end">
+      <DropdownMenuContent className="w-80 p-4" align="start"> {/* Changed align to "start" */}
         <DropdownMenuLabel>Grid Settings</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <ScrollArea className="h-[400px] pr-4">
