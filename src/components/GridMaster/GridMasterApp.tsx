@@ -6,7 +6,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { ImageUpload } from "./ImageUpload";
 import { GridCanvas } from "./GridCanvas";
 import { GridExporter } from "./GridExporter";
-import { GridControlsDropdown } from "./GridControlsDropdown"; // Import the new dropdown component
+import { GridControlsDropdown } from "./GridControlsDropdown";
 import GridMasterIcon from "/gridmaster-icon.png"; // Import the icon
 
 export const GridMasterApp = () => {
@@ -143,54 +143,54 @@ export const GridMasterApp = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
       <Card className="w-full max-w-6xl bg-card text-card-foreground shadow-lg flex flex-col flex-1">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-center lg:justify-start">
           <CardTitle className="text-3xl font-bold flex items-center">
             <img src={GridMasterIcon} alt="GridMaster Icon" className="h-8 w-auto mr-2" />
             GridMaster
           </CardTitle>
-          <GridControlsDropdown
-            rows={rows}
-            setRows={setRows}
-            cols={cols}
-            setCols={setCols}
-            lineThickness={lineThickness}
-            setLineThickness={setLineThickness}
-            lineColor={lineColor}
-            setLineColor={setLineColor}
-            lineOpacity={lineOpacity}
-            setLineOpacity={setLineOpacity}
-            labelColor={labelColor}
-            setLabelColor={setLabelColor}
-            showRowNumbers={showRowNumbers}
-            setShowRowNumbers={setShowRowNumbers}
-            showColNumbers={showColNumbers}
-            setShowColNumbers={setShowColNumbers}
-            showDiagonalLines={showDiagonalLines}
-            setShowDiagonalLines={setShowDiagonalLines}
-            diagonalLineOpacity={diagonalLineOpacity}
-            setDiagonalLineOpacity={setDiagonalLineOpacity}
-            zoomLevel={zoomLevel}
-            setZoomLevel={setZoomLevel}
-            onReset={resetGridSettings}
-            onExport={handleExport}
-            imageSrc={imageSrc}
-            showImage={showImage}
-            setShowImage={setShowImage}
-            onFitImage={handleFitImageToCanvas}
-            onCenterImage={handleCenterImageOnCanvas}
-            imageOffsetX={imageOffsetX}
-            setImageOffsetX={setImageOffsetX}
-            imageOffsetY={imageOffsetY}
-            setImageOffsetY={setImageOffsetY}
-            minOffsetX={minOffsetX}
-            maxOffsetX={maxOffsetX}
-            minOffsetY={minOffsetY}
-            maxOffsetY={maxOffsetY}
-          />
         </CardHeader>
         <CardContent className="flex flex-col lg:flex-row gap-6 flex-1">
           <div className="lg:w-1/3 space-y-6">
             <ImageUpload onImageUpload={setImageSrc} />
+            <GridControlsDropdown
+              rows={rows}
+              setRows={setRows}
+              cols={cols}
+              setCols={setCols}
+              lineThickness={lineThickness}
+              setLineThickness={setLineThickness}
+              lineColor={lineColor}
+              setLineColor={setLineColor}
+              lineOpacity={lineOpacity}
+              setLineOpacity={setLineOpacity}
+              labelColor={labelColor}
+              setLabelColor={setLabelColor}
+              showRowNumbers={showRowNumbers}
+              setShowRowNumbers={setShowRowNumbers}
+              showColNumbers={showColNumbers}
+              setShowColNumbers={setShowColNumbers}
+              showDiagonalLines={showDiagonalLines}
+              setShowDiagonalLines={setShowDiagonalLines}
+              diagonalLineOpacity={diagonalLineOpacity}
+              setDiagonalLineOpacity={setDiagonalLineOpacity}
+              zoomLevel={zoomLevel}
+              setZoomLevel={setZoomLevel}
+              onReset={resetGridSettings}
+              onExport={handleExport}
+              imageSrc={imageSrc}
+              showImage={showImage}
+              setShowImage={setShowImage}
+              onFitImage={handleFitImageToCanvas}
+              onCenterImage={handleCenterImageOnCanvas}
+              imageOffsetX={imageOffsetX}
+              setImageOffsetX={setImageOffsetX}
+              imageOffsetY={imageOffsetY}
+              setImageOffsetY={setImageOffsetY}
+              minOffsetX={minOffsetX}
+              maxOffsetX={maxOffsetX}
+              minOffsetY={minOffsetY}
+              maxOffsetY={maxOffsetY}
+            />
           </div>
           <div
             ref={canvasContainerRef}
