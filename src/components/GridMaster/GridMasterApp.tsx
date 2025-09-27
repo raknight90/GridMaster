@@ -43,7 +43,7 @@ export const GridMasterApp = () => {
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("change", updateDimensions); // Changed to 'change' for consistency
   }, []);
 
   // Effect to load image and set original dimensions
@@ -117,6 +117,14 @@ export const GridMasterApp = () => {
     setImageOffsetX((canvasContainerDimensions.width - currentImageWidth) / 2);
     setImageOffsetY((canvasContainerDimensions.height - currentImageHeight) / 2);
   }, [imageSrc, originalImageDimensions, canvasContainerDimensions, zoomLevel]);
+
+  // New effect to fit image to canvas on initial load or image change
+  useEffect(() => {
+    if (imageSrc && originalImageDimensions.width > 0 && canvasContainerDimensions.width > 0) {
+      handleFitImageToCanvas();
+    }
+  }, [imageSrc, originalImageDimensions, canvasContainerDimensions, handleFitImageToCanvas]);
+
 
   const handleExport = () => {
     if (imageSrc) {
