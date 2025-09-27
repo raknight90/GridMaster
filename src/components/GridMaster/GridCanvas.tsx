@@ -36,7 +36,6 @@ export const GridCanvas = ({
   zoomLevel,
   showImage,
 }: GridCanvasProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [originalImageDimensions, setOriginalImageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -56,31 +55,25 @@ export const GridCanvas = ({
 
   return (
     <div
-      ref={containerRef}
-      className="relative w-full h-full overflow-hidden"
-      // Removed cursor style and onMouseDown handler
+      className="relative" // Keep relative for absolute children
+      style={{
+        left: imageOffset.x,
+        top: imageOffset.y,
+        width: currentImageWidth,
+        height: currentImageHeight,
+      }}
     >
-      <div
-        className="absolute"
-        style={{
-          left: imageOffset.x,
-          top: imageOffset.y,
-          width: currentImageWidth,
-          height: currentImageHeight,
-        }}
-        // Removed onMouseDown handler
-      >
-        {showImage && (
-          <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
-        )}
+      {showImage && (
+        <img src={imageSrc} alt="Uploaded" className="max-w-none max-h-none" style={{ width: currentImageWidth, height: currentImageHeight }} />
+      )}
 
-        {/* SVG Grid Lines */}
-        <svg
-          className="absolute inset-0 pointer-events-none"
-          width={currentImageWidth}
-          height={currentImageHeight}
-          style={{ opacity: lineOpacity / 100 }}
-        >
+      {/* SVG Grid Lines */}
+      <svg
+        className="absolute inset-0 pointer-events-none"
+        width={currentImageWidth}
+        height={currentImageHeight}
+        style={{ opacity: lineOpacity / 100 }}
+      >
           {/* Horizontal Lines */}
           {Array.from({ length: rows + 1 }).map((_, i) => (
             <line
@@ -206,7 +199,6 @@ export const GridCanvas = ({
             </>
           )}
         </div>
-      </div>
     </div>
   );
 };
