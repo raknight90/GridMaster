@@ -43,7 +43,7 @@ export const GridMasterApp = () => {
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("change", updateDimensions); // Changed to 'change' for better mobile responsiveness
   }, []);
 
   // Effect to load image and set original dimensions
@@ -102,6 +102,7 @@ export const GridMasterApp = () => {
       newZoomLevel = (scaledHeight / originalImageDimensions.height) * 100;
     }
 
+    setZoomLevel(newZoomLevel); // Set the new zoom level
     setImageOffsetX((canvasContainerDimensions.width - scaledWidth) / 2);
     setImageOffsetY((canvasContainerDimensions.height - scaledHeight) / 2);
   }, [imageSrc, originalImageDimensions, canvasContainerDimensions]);
@@ -141,14 +142,14 @@ export const GridMasterApp = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4">
-      <Card className="w-full max-w-6xl bg-card text-card-foreground shadow-lg">
+      <Card className="w-full max-w-6xl bg-card text-card-foreground shadow-lg flex flex-col flex-1">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center flex items-center justify-center">
             <img src={GridMasterIcon} alt="GridMaster Icon" className="h-8 w-auto mr-2" />
             GridMaster
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col lg:flex-row gap-6">
+        <CardContent className="flex flex-col lg:flex-row gap-6 flex-1">
           <div className="lg:w-1/3 space-y-6">
             <ImageUpload onImageUpload={setImageSrc} />
             <GridControls
@@ -193,7 +194,7 @@ export const GridMasterApp = () => {
           </div>
           <div
             ref={canvasContainerRef}
-            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-auto bg-muted"
+            className="lg:w-2/3 relative min-h-[400px] border border-border rounded-md overflow-auto bg-muted flex-1"
           >
             {imageSrc ? (
               <GridCanvas
