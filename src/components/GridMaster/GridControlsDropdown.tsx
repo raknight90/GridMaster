@@ -105,7 +105,7 @@ export const GridControlsDropdown = ({
           Controls
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 p-4" align="start"> {/* Changed align to "start" */}
+      <DropdownMenuContent className="w-80 p-4 bg-card/80 backdrop-blur-sm" align="start"> {/* Added bg-card/80 and backdrop-blur-sm */}
         <DropdownMenuLabel>Grid Settings</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <ScrollArea className="h-[400px] pr-4">
